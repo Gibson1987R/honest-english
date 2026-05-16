@@ -1,0 +1,36 @@
+{
+  "A1": [
+    { "text": "Hello, my name is Gibson.", "translation": "Hola, mi nombre es Gibson." },
+    { "text": "I am from Colombia.", "translation": "Soy de Colombia." },
+    { "text": "I have two brothers.", "translation": "Tengo dos hermanos." },
+    { "text": "I like coffee in the morning.", "translation": "Me gusta el café en la mañana." },
+    { "text": "What is your name?", "translation": "¿Cuál es tu nombre?" },
+    { "text": "I work as an administrative assistant.", "translation": "Trabajo como asistente administrativo." }
+  ],
+  "A2": [
+    { "text": "Yesterday I went to the supermarket.", "translation": "Ayer fui al supermercado." },
+    { "text": "I have been learning English for two months.", "translation": "He estado aprendiendo inglés por dos meses." },
+    { "text": "Could you repeat that, please?", "translation": "¿Podrías repetir eso, por favor?" },
+    { "text": "I'm sorry, I didn't understand.", "translation": "Lo siento, no entendí." },
+    { "text": "What time does the meeting start?", "translation": "¿A qué hora empieza la reunión?" },
+    { "text": "I need to send this email before noon.", "translation": "Necesito enviar este correo antes del mediodía." },
+    { "text": "She doesn't usually work on weekends.", "translation": "Ella usualmente no trabaja los fines de semana." },
+    { "text": "How long have you been studying English?", "translation": "¿Cuánto tiempo llevas estudiando inglés?" },
+    { "text": "I think this is a good idea.", "translation": "Creo que esta es una buena idea." },
+    { "text": "Can you help me with this problem?", "translation": "¿Puedes ayudarme con este problema?" }
+  ],
+  "B1": [
+    { "text": "If I had more time, I would learn another language.", "translation": "Si tuviera más tiempo, aprendería otro idioma." },
+    { "text": "I'm looking forward to meeting your team next week.", "translation": "Tengo ganas de conocer a tu equipo la próxima semana." },
+    { "text": "Although it was raining, we decided to go for a walk.", "translation": "Aunque estaba lloviendo, decidimos ir a caminar." },
+    { "text": "I've been working on this project since January.", "translation": "He estado trabajando en este proyecto desde enero." },
+    { "text": "The meeting was postponed because of a scheduling conflict.", "translation": "La reunión fue pospuesta por un conflicto de agenda." },
+    { "text": "I'd rather work from home today if that's okay.", "translation": "Preferiría trabajar desde casa hoy si está bien." }
+  ],
+  "B2": [
+    { "text": "Had I known about the problem, I would have addressed it sooner.", "translation": "Si hubiera sabido del problema, lo habría atendido antes." },
+    { "text": "The proposal was unanimously approved despite some initial concerns.", "translation": "La propuesta fue aprobada por unanimidad a pesar de algunas preocupaciones iniciales." },
+    { "text": "I appreciate your patience while we sort this out.", "translation": "Aprecio tu paciencia mientras resolvemos esto." },
+    { "text": "Could you walk me through the deployment process step by step?", "translation": "¿Podrías explicarme el proceso de despliegue paso a paso?" }
+  ]
+}

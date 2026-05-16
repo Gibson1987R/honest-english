@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>honest-english · Dashboard</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="index.html">🎯 honest-english</a>
+  <div class="links">
+    <a href="index.html" class="active">Dashboard</a>
+    <a href="test.html">Test CEFR</a>
+    <a href="speaking.html">Speaking</a>
+  </div>
+  <div class="streak" id="nav-streak"></div>
+</nav>
+
+<div class="container">
+
+<header>
+  <h1>Tu progreso real, sin filtros</h1>
+  <p class="subtitle">El único progreso que cuenta es el que mides honestamente.</p>
+</header>
+
+<!-- HONEST MESSAGE (the differentiator) -->
+<div id="honest-msg" class="streak-card">
+  <div class="num" id="msg-num">—</div>
+  <div class="label" id="msg-label">cargando…</div>
+</div>
+
+<!-- STATS -->
+<div class="card">
+  <h2>📊 Tus números</h2>
+  <div class="summary-grid">
+    <div class="stat-box">
+      <div class="num" id="stat-level">—</div>
+      <div class="lab">Nivel CEFR actual</div>
+    </div>
+    <div class="stat-box">
+      <div class="num" id="stat-sessions">0</div>
+      <div class="lab">Sesiones de speaking</div>
+    </div>
+    <div class="stat-box">
+      <div class="num" id="stat-streak">0</div>
+      <div class="lab">Días consecutivos</div>
+    </div>
+    <div class="stat-box">
+      <div class="num" id="stat-avg">—</div>
+      <div class="lab">Score promedio speaking</div>
+    </div>
+  </div>
+</div>
+
+<!-- CALL TO ACTION -->
+<div class="card">
+  <h2>⚡ Qué hacer ahora</h2>
+  <p style="color: var(--muted); margin-bottom: 12px;" id="cta-msg">Empieza con un test para saber tu nivel real.</p>
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <a href="test.html" class="btn">📝 Hacer test CEFR</a>
+    <a href="speaking.html" class="btn btn-success">🎤 Practicar speaking</a>
+  </div>
+</div>
+
+<!-- LATEST TEST RESULT -->
+<div class="card hidden" id="last-test">
+  <h2>📈 Último test</h2>
+  <div id="last-test-content"></div>
+  <a href="test.html" class="btn btn-secondary btn-small" style="margin-top:12px">Volver a hacer test</a>
+</div>
+
+<!-- RESOURCES FOR YOUR LEVEL -->
+<div class="card">
+  <h2>📚 Recursos para tu nivel</h2>
+  <p style="color: var(--muted); margin-bottom: 16px; font-size: 0.9rem;" id="resources-intro">Haz el test primero para que filtremos recursos a tu medida.</p>
+  <div id="resources-content"></div>
+</div>
+
+<!-- DANGER ZONE -->
+<div class="card" style="border-color: var(--danger); border-style: dashed;">
+  <h2 style="color: var(--danger);">⚠️ Zona honesta</h2>
+  <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 12px;">Esto borra todo tu historial local. No hay vuelta atrás.</p>
+  <button class="btn btn-danger btn-small" onclick="resetAll()">🗑 Resetear todo</button>
+</div>
+
+<footer>
+  honest-english · tu progreso real · <a href="https://github.com/gibsonrosales/honest-english" target="_blank" style="color: var(--accent);">GitHub</a>
+</footer>
+
+</div>
+
+<script src="js/tracker.js"></script>
+<script src="js/resources.js"></script>
+<script>
+async function initDashboard() {
+  const data = Tracker.load();
+  const level = Tracker.currentLevel();
+  const streak = Tracker.speakingStreak();
+  const sessions = Tracker.totalSpeakingSessions();
+  const avgScore = Tracker.avgSpeakingScore();
+  const msg = Tracker.honestMessage();
+
+  // Honest message card
+  const card = document.getElementById('honest-msg');
+  card.classList.remove('ok', 'warning');
+  card.classList.add(msg.tone === 'ok' ? 'ok' : (msg.tone === 'warning' ? 'warning' : ''));
+  document.getElementById('msg-num').textContent =
+    streak > 0 ? `🔥 ${streak}` : (sessions > 0 ? '⚠️' : '👋');
+  document.getElementById('msg-label').textContent = msg.text;
+
+  // Stats
+  document.getElementById('stat-level').textContent = level || '—';
+  document.getElementById('stat-sessions').textContent = sessions;
+  document.getElementById('stat-streak').textContent = streak;
+  document.getElementById('stat-avg').textContent = avgScore !== null ? `${avgScore}%` : '—';
+
+  // Nav streak
+  if (streak > 0) {
+    document.getElementById('nav-streak').textContent = `🔥 ${streak} día${streak > 1 ? 's' : ''}`;
+  }
+
+  // CTA logic
+  const cta = document.getElementById('cta-msg');
+  if (!level) {
+    cta.textContent = '👉 Empieza con el test para saber tu nivel real (15-25 min).';
+  } else if (sessions === 0) {
+    cta.innerHTML = `Tu nivel es <strong>${level}</strong>. Lo que más necesitas: <strong>empezar a hablar HOY</strong>. Ve a speaking.`;
+  } else if (Tracker.daysSinceLastSpeaking() > 2) {
+    cta.innerHTML = `Llevas <strong>${Tracker.daysSinceLastSpeaking()} días</strong> sin practicar. Vuelve a speaking ahora.`;
+  } else {
+    cta.innerHTML = `Vas bien. Sigue con speaking diario. Vuelve a hacer el test cada 4-6 semanas para medir progreso real.`;
+  }
+
+  // Last test details
+  if (data.testHistory.length) {
+    const last = data.testHistory[data.testHistory.length - 1];
+    document.getElementById('last-test').classList.remove('hidden');
+    const skillsHtml = Object.entries(last.bySkill || {}).map(([skill, s]) => {
+      const pct = s.total ? Math.round((s.correct/s.total) * 100) : 0;
+      return `
+        <div class="skill-bar">
+          <div class="skill-bar-header"><span>${skill}</span><span>${s.correct}/${s.total} (${pct}%)</span></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      `;
+    }).join('');
+    document.getElementById('last-test-content').innerHTML = `
+      <p style="color: var(--muted); margin-bottom: 12px;">Hace ${Tracker.daysSinceLastTest()} día(s) · ${last.correct}/${last.total} correctas · Nivel <strong style="color: var(--accent)">${last.cefr}</strong></p>
+      ${skillsHtml}
+    `;
+  }
+
+  // Resources filtered for level
+  if (level) {
+    document.getElementById('resources-intro').textContent = `Filtrados para nivel ${level}, ordenados por prioridad real para tu situación.`;
+    try {
+      const all = await loadResources();
+      const filtered = filterResourcesForLevel(all, level);
+      document.getElementById('resources-content').innerHTML = renderResourcesByCategory(filtered);
+    } catch (e) {
+      document.getElementById('resources-content').innerHTML = '<p style="color:var(--danger)">No se pudieron cargar los recursos (¿estás abriendo el archivo directo? Necesitas un servidor local: prueba con <code>python3 -m http.server</code>)</p>';
+    }
+  }
+}
+
+function resetAll() {
+  if (!confirm('¿Borrar TODO el historial? No hay forma de recuperarlo.')) return;
+  Tracker.reset();
+  location.reload();
+}
+
+initDashboard();
+</script>
+</body>
+</html>

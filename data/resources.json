@@ -1,0 +1,191 @@
+[
+  {
+    "name": "iTalki",
+    "url": "https://www.italki.com",
+    "description": "Tutores reales 1-a-1. $5-15/hora. Lo más efectivo para speaking real.",
+    "category": "speaking",
+    "type": "paid",
+    "levels": ["A2", "B1", "B2", "C1", "C2"],
+    "priority": 10
+  },
+  {
+    "name": "Cambly",
+    "url": "https://www.cambly.com",
+    "description": "Tutores nativos al instante, sin reservar cita. Más caro.",
+    "category": "speaking",
+    "type": "paid",
+    "levels": ["A2", "B1", "B2", "C1"],
+    "priority": 7
+  },
+  {
+    "name": "Tandem",
+    "url": "https://www.tandem.net",
+    "description": "Intercambio de idiomas gratis. Tú enseñas español, ellos te enseñan inglés.",
+    "category": "speaking",
+    "type": "free",
+    "levels": ["A2", "B1", "B2", "C1", "C2"],
+    "priority": 9
+  },
+  {
+    "name": "HelloTalk",
+    "url": "https://www.hellotalk.com",
+    "description": "Chats con correcciones automáticas, llamadas, posts tipo redes sociales.",
+    "category": "speaking",
+    "type": "free",
+    "levels": ["A2", "B1", "B2"],
+    "priority": 8
+  },
+  {
+    "name": "ChatGPT (modo voz)",
+    "url": "https://chat.openai.com",
+    "description": "Conversación ilimitada en inglés. Perfecto si te da pena hablar con humanos primero.",
+    "category": "speaking",
+    "type": "freemium",
+    "levels": ["A1", "A2", "B1", "B2"],
+    "priority": 9
+  },
+  {
+    "name": "Anki",
+    "url": "https://apps.ankiweb.net",
+    "description": "Repetición espaciada. Solo guarda palabras que ves en contexto real, no listas.",
+    "category": "vocab",
+    "type": "free",
+    "levels": ["A1", "A2", "B1", "B2", "C1", "C2"],
+    "priority": 9
+  },
+  {
+    "name": "Cambridge Dictionary",
+    "url": "https://dictionary.cambridge.org/dictionary/english",
+    "description": "Definiciones en inglés con CEFR level por palabra. Pronunciación UK y US.",
+    "category": "vocab",
+    "type": "free",
+    "levels": ["A2", "B1", "B2", "C1", "C2"],
+    "priority": 8
+  },
+  {
+    "name": "BBC Learning English",
+    "url": "https://www.bbc.co.uk/learningenglish",
+    "description": "Lecciones estructuradas por nivel. Excelente para A1-B1.",
+    "category": "listening",
+    "type": "free",
+    "levels": ["A1", "A2", "B1", "B2"],
+    "priority": 10
+  },
+  {
+    "name": "BBC 6 Minute English",
+    "url": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english",
+    "description": "Podcast diario de 6 minutos. Perfecto para entrenamiento de listening.",
+    "category": "listening",
+    "type": "free",
+    "levels": ["A2", "B1", "B2"],
+    "priority": 10
+  },
+  {
+    "name": "YouTube · English with Lucy",
+    "url": "https://www.youtube.com/@EnglishWithLucy",
+    "description": "Pronunciación británica clara. Mira sus videos con subtítulos EN INGLÉS, no español.",
+    "category": "listening",
+    "type": "free",
+    "levels": ["A2", "B1", "B2"],
+    "priority": 8
+  },
+  {
+    "name": "YouTube · Rachel's English",
+    "url": "https://www.youtube.com/@rachelsenglish",
+    "description": "Pronunciación americana. Cómo hablan los nativos de verdad.",
+    "category": "pronunciation",
+    "type": "free",
+    "levels": ["A2", "B1", "B2", "C1"],
+    "priority": 9
+  },
+  {
+    "name": "YouTube · Real English Conversations",
+    "url": "https://www.youtube.com/@realenglishconversations",
+    "description": "Diálogos reales con subtítulos. Tema cotidiano, perfecto para A2/B1.",
+    "category": "listening",
+    "type": "free",
+    "levels": ["A2", "B1"],
+    "priority": 9
+  },
+  {
+    "name": "TED Talks",
+    "url": "https://www.youtube.com/results?search_query=ted+talks",
+    "description": "Charlas con transcripts. Activa subtítulos en inglés. Variedad de temas.",
+    "category": "listening",
+    "type": "free",
+    "levels": ["B1", "B2", "C1", "C2"],
+    "priority": 8
+  },
+  {
+    "name": "The Daily (NYT podcast)",
+    "url": "https://www.nytimes.com/column/the-daily",
+    "description": "Noticias de 20 minutos en inglés americano profesional.",
+    "category": "listening",
+    "type": "free",
+    "levels": ["B1", "B2", "C1"],
+    "priority": 7
+  },
+  {
+    "name": "Friends (serie)",
+    "url": "https://www.youtube.com/results?search_query=friends+full+episodes+english+subtitles",
+    "description": "Inglés conversacional claro. Activa subs EN INGLÉS. Repetitivo y simple.",
+    "category": "listening",
+    "type": "free",
+    "levels": ["A2", "B1"],
+    "priority": 9
+  },
+  {
+    "name": "r/EnglishLearning",
+    "url": "https://www.reddit.com/r/EnglishLearning",
+    "description": "Comunidad activa. Postea dudas, lee ejemplos reales escritos por aprendices.",
+    "category": "community",
+    "type": "free",
+    "levels": ["A2", "B1", "B2", "C1"],
+    "priority": 6
+  },
+  {
+    "name": "Engoo Daily News",
+    "url": "https://engoo.com/app/daily-news",
+    "description": "Artículos cortos por nivel con audio. Gratis sin cuenta.",
+    "category": "reading",
+    "type": "free",
+    "levels": ["A2", "B1", "B2"],
+    "priority": 8
+  },
+  {
+    "name": "ESL Fast",
+    "url": "https://www.eslfast.com",
+    "description": "Cientos de historias cortas con audio, organizadas por dificultad.",
+    "category": "reading",
+    "type": "free",
+    "levels": ["A1", "A2", "B1"],
+    "priority": 7
+  },
+  {
+    "name": "LingQ",
+    "url": "https://www.lingq.com",
+    "description": "Lectura con audio simultáneo, vocab tracking. Bueno para input masivo.",
+    "category": "reading",
+    "type": "freemium",
+    "levels": ["A2", "B1", "B2", "C1"],
+    "priority": 7
+  },
+  {
+    "name": "Pronuncian (American Accent)",
+    "url": "https://pronuncian.com",
+    "description": "Drills específicos de sonidos del inglés americano.",
+    "category": "pronunciation",
+    "type": "freemium",
+    "levels": ["A2", "B1", "B2"],
+    "priority": 7
+  },
+  {
+    "name": "YouGlish",
+    "url": "https://youglish.com",
+    "description": "Busca cualquier palabra/frase y te muestra a nativos pronunciándola en videos reales. ORO.",
+    "category": "pronunciation",
+    "type": "free",
+    "levels": ["A2", "B1", "B2", "C1", "C2"],
+    "priority": 10
+  }
+]

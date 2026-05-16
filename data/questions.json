@@ -1,0 +1,51 @@
+[
+  { "level": "A1", "skill": "grammar", "q": "Hello, what ___ your name?", "options": ["is", "are", "am", "be"], "correct": 0 },
+  { "level": "A1", "skill": "vocab", "q": "I have two ___: a cat and a dog.", "options": ["pets", "foods", "books", "houses"], "correct": 0 },
+  { "level": "A1", "skill": "grammar", "q": "She ___ to school every day.", "options": ["go", "goes", "going", "went"], "correct": 1 },
+  { "level": "A1", "skill": "vocab", "q": "It's very cold today. I need my ___.", "options": ["jacket", "swimsuit", "sunglasses", "sandals"], "correct": 0 },
+  { "level": "A1", "skill": "grammar", "q": "There ___ a cat under the table.", "options": ["is", "are", "have", "do"], "correct": 0 },
+
+  { "level": "A2", "skill": "grammar", "q": "Yesterday I ___ to the cinema with my brother.", "options": ["go", "going", "went", "have gone"], "correct": 2 },
+  { "level": "A2", "skill": "vocab", "q": "I can't come to the party because I'm ___.", "options": ["interesting", "busy", "wide", "loud"], "correct": 1 },
+  { "level": "A2", "skill": "grammar", "q": "There ___ any milk in the fridge.", "options": ["isn't", "aren't", "doesn't", "haven't"], "correct": 0 },
+  { "level": "A2", "skill": "vocab", "q": "Could you ___ the door, please? It's hot in here.", "options": ["open", "close", "break", "paint"], "correct": 0 },
+  { "level": "A2", "skill": "grammar", "q": "I ___ ever been to Japan, but I want to go.", "options": ["have never", "haven't never", "didn't", "no"], "correct": 0 },
+
+  { "level": "B1", "skill": "grammar", "q": "If I ___ rich, I would travel around the world.", "options": ["am", "was", "were", "will be"], "correct": 2, "note": "'were' es el subjuntivo correcto en condicional tipo 2" },
+  { "level": "B1", "skill": "grammar", "q": "I'm looking forward to ___ you next week.", "options": ["see", "seeing", "saw", "have seen"], "correct": 1 },
+  { "level": "B1", "skill": "vocab", "q": "She's very ___ — she always tells the truth.", "options": ["honest", "lazy", "shy", "rude"], "correct": 0 },
+  { "level": "B1", "skill": "grammar", "q": "I've lived in this city ___ five years.", "options": ["since", "for", "during", "ago"], "correct": 1 },
+  { "level": "B1", "skill": "vocab", "q": "He decided to ___ a new business after losing his job.", "options": ["start", "stop", "stay", "leave"], "correct": 0 },
+
+  { "level": "B2", "skill": "grammar", "q": "By next June, I ___ working here for ten years.", "options": ["will be", "will have been", "have been", "would be"], "correct": 1 },
+  { "level": "B2", "skill": "vocab", "q": "The company decided to ___ the meeting until next week.", "options": ["postpone", "advance", "perform", "settle"], "correct": 0 },
+  { "level": "B2", "skill": "grammar", "q": "She denied ___ the document, even though there was evidence.", "options": ["to sign", "signing", "signed", "to have signed"], "correct": 1 },
+  { "level": "B2", "skill": "vocab", "q": "I can't ___ with his constant complaining anymore.", "options": ["put up", "put on", "put off", "put down"], "correct": 0, "note": "phrasal verb: 'put up with' = tolerar" },
+
+  { "level": "C1", "skill": "grammar", "q": "Had I known about the deadline, I ___ the project on time.", "options": ["would finish", "will have finished", "would have finished", "had finished"], "correct": 2 },
+  { "level": "C1", "skill": "vocab", "q": "His comments were rather ___; they didn't really address the main issue.", "options": ["tangential", "imperative", "imminent", "transient"], "correct": 0 },
+  { "level": "C1", "skill": "grammar", "q": "Not only ___ the deadline, but he also exceeded all expectations.", "options": ["he met", "did he meet", "he did meet", "met he"], "correct": 1, "note": "inversion después de 'not only'" },
+
+  { "level": "C2", "skill": "vocab", "q": "The argument was so ___ that it was almost impossible to refute.", "options": ["cogent", "contingent", "diffident", "obtuse"], "correct": 0 },
+  { "level": "C2", "skill": "grammar", "q": "Were it not for your help, I ___ this challenge.", "options": ["wouldn't overcome", "couldn't have overcome", "shouldn't overcome", "wouldn't have overcome"], "correct": 3 },
+
+  { "type": "reading-text", "text": "Maria works at a small bookstore in the city center. She loves her job because she gets to recommend books to customers all day. However, the salary is low and she sometimes thinks about looking for something else. Last month, the owner told her that if sales improve this year, she'll get a small raise. Maria is trying to use social media to attract more young customers." },
+  { "level": "B1", "skill": "reading", "q": "Why does Maria like her job?", "options": ["The salary is good", "She recommends books to people", "It's near her house", "She owns the store"], "correct": 1 },
+  { "level": "B1", "skill": "reading", "q": "What is she doing to help the bookstore?", "options": ["Looking for a new job", "Lowering prices", "Using social media", "Closing on weekends"], "correct": 2 },
+  { "level": "B2", "skill": "reading", "q": "What can we infer about Maria?", "options": ["She'll quit soon", "She's somewhat conflicted about her job", "She owns the bookstore", "She hates customers"], "correct": 1 },
+
+  { "type": "reading-text", "text": "Recent studies suggest that remote work, while increasing productivity for some, may actually undermine professional development for early-career employees. Without informal hallway conversations and spontaneous mentorship moments, junior staff report feeling disconnected from organizational culture. Companies are now grappling with how to balance the flexibility employees demand with the structured exposure that fosters growth." },
+  { "level": "B2", "skill": "reading", "q": "According to the text, who is most affected by the downsides of remote work?", "options": ["Senior managers", "Junior employees", "Remote workers in general", "Company owners"], "correct": 1 },
+  { "level": "C1", "skill": "reading", "q": "What does 'grappling with' most likely mean in this context?", "options": ["Solving easily", "Struggling to address", "Ignoring", "Celebrating"], "correct": 1 },
+  { "level": "C1", "skill": "reading", "q": "The author's tone is best described as:", "options": ["Enthusiastic about remote work", "Strongly against remote work", "Analytical and balanced", "Personally critical of employees"], "correct": 2 },
+
+  { "type": "listening", "level": "A2", "skill": "listening", "text": "I usually have coffee for breakfast, but today I had tea instead.", "q": "What did the person have for breakfast today?", "options": ["Coffee", "Tea", "Juice", "Nothing"], "correct": 1 },
+  { "type": "listening", "level": "B1", "skill": "listening", "text": "The train to London leaves at half past nine from platform four, not platform two as previously announced.", "q": "From which platform does the train leave?", "options": ["Two", "Three", "Four", "Nine"], "correct": 2 },
+  { "type": "listening", "level": "B1", "skill": "listening", "text": "Although she had studied hard, she didn't feel confident about the exam, and her results turned out to be average.", "q": "How did her exam go?", "options": ["Excellent", "Average", "Very poor", "She didn't take it"], "correct": 1 },
+  { "type": "listening", "level": "B2", "skill": "listening", "text": "Had the company invested in better training earlier, they wouldn't be facing this productivity crisis now. It's a clear case of short-term thinking.", "q": "What is the speaker's main point?", "options": ["The company invested in training", "The crisis was caused by lack of foresight", "Productivity is improving", "Training is too expensive"], "correct": 1 },
+  { "type": "listening", "level": "C1", "skill": "listening", "text": "Despite the prevailing skepticism, the proposal garnered significant support across departments, suggesting a fundamental shift in how stakeholders perceive risk.", "q": "What does the speaker imply?", "options": ["The proposal was rejected", "People are starting to view risk differently", "Departments are not aligned", "Skepticism has won"], "correct": 1 },
+
+  { "type": "self", "skill": "speaking", "q": "🗣 ¿Cómo te sientes con SPEAKING? Imagina una entrevista de trabajo en inglés.", "options": ["No podría decir más que 'hello'", "Puedo presentarme y responder preguntas básicas", "Puedo describir mi experiencia con esfuerzo y errores", "Puedo conversar bien aunque con pausas", "Puedo defender ideas complejas sin dificultad"] },
+  { "type": "self", "skill": "speaking", "q": "🗣 ¿Cuándo fue la última vez que hablaste inglés en voz alta?", "options": ["Nunca", "Hace meses/años", "Hace algunas semanas", "Esta semana", "Hoy o ayer"] },
+  { "type": "self", "skill": "writing", "q": "✍️ ¿Podrías escribir un email profesional en inglés sin diccionario?", "options": ["Imposible", "Solo frases muy básicas", "Sí, pero con muchos errores", "Sí, con algunos errores", "Sí, casi sin problemas"] }
+]

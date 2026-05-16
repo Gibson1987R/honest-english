@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>honest-english · Test CEFR</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="index.html">🎯 honest-english</a>
+  <div class="links">
+    <a href="index.html">Dashboard</a>
+    <a href="test.html" class="active">Test CEFR</a>
+    <a href="speaking.html">Speaking</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<header>
+  <h1>🎯 Test de Inglés CEFR</h1>
+  <p class="subtitle">Evaluación real alineada al estándar internacional A1–C2</p>
+</header>
+
+<div id="intro" class="card">
+  <h2>¿Qué vas a hacer?</h2>
+  <p style="margin-bottom:12px">Este test mide tu nivel en 4 áreas reales, igual que los exámenes oficiales (Cambridge, IELTS).</p>
+  <ul style="margin-left: 20px; color: var(--muted); margin-bottom:16px">
+    <li><strong style="color:var(--text)">Vocabulario y Gramática</strong> — preguntas progresivas A1→C2</li>
+    <li><strong style="color:var(--text)">Lectura</strong> — preguntas sobre textos cortos</li>
+    <li><strong style="color:var(--text)">Listening</strong> — tu navegador lee en voz alta (Web Speech API)</li>
+    <li><strong style="color:var(--text)">Autoevaluación</strong> — speaking y writing (honesto, no se puede medir automático)</li>
+  </ul>
+  <p style="margin-bottom: 12px; color: var(--muted); font-size: 0.9rem;">⏱ 15-25 minutos. Sin tiempo límite. Sé honesto: si no sabes, marca "no sé" (es info real).</p>
+  <button class="btn" onclick="startTest()">Empezar test</button>
+</div>
+
+<div id="test" class="card hidden">
+  <div class="progress"><div class="progress-fill" id="progress-bar" style="width: 0%"></div></div>
+  <div id="question-container"></div>
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" id="prev-btn" onclick="prevQuestion()">← Anterior</button>
+    <button class="btn" id="next-btn" onclick="nextQuestion()">Siguiente →</button>
+  </div>
+</div>
+
+<div id="results" class="hidden">
+  <div class="card">
+    <div class="result-level">
+      <div class="big" id="cefr-level">B1</div>
+      <div class="label" id="cefr-label">Intermediate</div>
+      <p style="margin-top:12px; color: var(--text);" id="cefr-summary"></p>
+    </div>
+
+    <h2>📊 Tu desempeño por área</h2>
+    <div id="skill-bars"></div>
+
+    <div class="summary-grid" id="stats-grid"></div>
+  </div>
+
+  <div class="card">
+    <h2>🗺 Tu ruta hacia speaking fluido</h2>
+    <div id="roadmap"></div>
+  </div>
+
+  <div class="card">
+    <h2>📚 Recursos filtrados para tu nivel</h2>
+    <div id="result-resources"></div>
+  </div>
+
+  <div class="card">
+    <h2>📝 Revisar respuestas</h2>
+    <button class="btn btn-secondary btn-small" onclick="toggleReview()">Mostrar/Ocultar revisión</button>
+    <div id="review" class="hidden" style="margin-top:16px"></div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <a href="speaking.html" class="btn btn-success">🎤 Ir a practicar speaking</a>
+      <button class="btn btn-secondary" onclick="restart()">🔄 Hacer test otra vez</button>
+      <a href="index.html" class="btn btn-secondary">🏠 Dashboard</a>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script src="js/tracker.js"></script>
+<script src="js/results.js"></script>
+<script src="js/resources.js"></script>
+<script src="js/test.js"></script>
+</body>
+</html>
