@@ -97,6 +97,20 @@ function suggestNextLevel(currentLevel) {
   return LEVELS_ORDER[idx + 1];
 }
 
+// ===== UI language by level =====
+function uiLangForLevel(cefr) {
+  if (!cefr || cefr === 'Pre-A1' || cefr === 'A1' || cefr === 'A2') return 'es';
+  if (cefr === 'B1' || cefr === 'B2') return 'bi';
+  return 'en';
+}
+
+function applyUILang() {
+  const lvl = Tracker.currentLevel();
+  const lang = uiLangForLevel(lvl);
+  document.body.classList.remove('lang-es', 'lang-bi', 'lang-en');
+  document.body.classList.add(`lang-${lang}`);
+}
+
 // ===== UI =====
 function renderGoalForm() {
   const current = Tracker.currentLevel() || 'A2';
@@ -109,6 +123,11 @@ function renderGoalForm() {
   document.getElementById('target-date').value = targetDate;
   document.getElementById('target-date').min = new Date().toISOString().slice(0, 10);
 
+  if (existing?.motivation) {
+    document.getElementById('motivation').value = existing.motivation;
+  }
+
+  applyUILang();
   recomputePlan();
 }
 
@@ -167,8 +186,9 @@ function recomputePlan() {
 function saveGoal() {
   const targetLevel = document.getElementById('target-level-select').value;
   const targetDate = document.getElementById('target-date').value;
+  const motivation = document.getElementById('motivation').value.trim();
   if (!targetDate) { alert('Elige una fecha objetivo.'); return; }
-  Tracker.setGoal({ targetLevel, targetDate });
+  Tracker.setGoal({ targetLevel, targetDate, motivation });
   document.getElementById('save-status').textContent = '✓ Meta guardada';
   setTimeout(() => document.getElementById('save-status').textContent = '', 3000);
 }
