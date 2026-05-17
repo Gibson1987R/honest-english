@@ -108,7 +108,8 @@ async function initDashboard() {
   // Honest message card
   const card = document.getElementById('honest-msg');
   card.classList.remove('ok', 'warning');
-  card.classList.add(msg.tone === 'ok' ? 'ok' : (msg.tone === 'warning' ? 'warning' : ''));
+  if (msg.tone === 'ok') card.classList.add('ok');
+  else if (msg.tone === 'warning') card.classList.add('warning');
   document.getElementById('msg-num').textContent =
     streak > 0 ? `🔥 ${streak}` : (sessions > 0 ? '⚠️' : '👋');
   document.getElementById('msg-label').textContent = msg.text;
