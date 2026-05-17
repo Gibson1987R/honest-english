@@ -12,9 +12,11 @@
   <a class="brand" href="index.html">🎯 honest-english</a>
   <div class="links">
     <a href="index.html" class="active">Dashboard</a>
+    <a href="goal.html">Goal</a>
     <a href="test.html">Test CEFR</a>
     <a href="speaking.html">Speaking</a>
     <a href="writing.html">Writing</a>
+    <a href="vocab.html">Vocab</a>
     <a href="settings.html">Settings</a>
   </div>
   <div class="streak" id="nav-streak"></div>
@@ -31,6 +33,19 @@
 <div id="honest-msg" class="streak-card">
   <div class="num" id="msg-num">—</div>
   <div class="label" id="msg-label">cargando…</div>
+</div>
+
+<!-- GOAL & TODAY'S PLAN -->
+<div class="card hidden" id="goal-card" style="border-color: var(--accent);">
+  <h2>🎯 Tu meta y plan de hoy</h2>
+  <div id="goal-content"></div>
+</div>
+
+<!-- NO-GOAL PROMPT -->
+<div class="card hidden" id="no-goal-card" style="border-color: var(--accent); border-style: dashed;">
+  <h2>🎯 Aún no tienes meta</h2>
+  <p style="color: var(--muted); margin-bottom: 12px;">Sin meta concreta, no hay plan. Fíjala en 1 minuto.</p>
+  <a href="goal.html" class="btn">Fijar mi meta CEFR →</a>
 </div>
 
 <!-- STATS -->
@@ -53,6 +68,14 @@
       <div class="num" id="stat-avg">—</div>
       <div class="lab">Score promedio speaking</div>
     </div>
+    <div class="stat-box">
+      <div class="num" id="stat-pomos">0</div>
+      <div class="lab">🍅 Pomos esta semana</div>
+    </div>
+    <div class="stat-box">
+      <div class="num" id="stat-vocab">0</div>
+      <div class="lab">📚 Vocab cards pendientes</div>
+    </div>
   </div>
 </div>
 
@@ -64,6 +87,7 @@
     <a href="test.html" class="btn">📝 Hacer test CEFR</a>
     <a href="speaking.html" class="btn btn-success">🎤 Practicar speaking</a>
     <a href="writing.html" class="btn btn-secondary">✍️ Practicar writing</a>
+    <a href="vocab.html" class="btn btn-secondary">📚 Repasar vocab</a>
   </div>
 </div>
 
@@ -96,6 +120,7 @@
 
 <script src="js/tracker.js"></script>
 <script src="js/resources.js"></script>
+<script src="js/goal.js"></script>
 <script>
 async function initDashboard() {
   const data = Tracker.load();
@@ -119,6 +144,44 @@ async function initDashboard() {
   document.getElementById('stat-sessions').textContent = sessions;
   document.getElementById('stat-streak').textContent = streak;
   document.getElementById('stat-avg').textContent = avgScore !== null ? `${avgScore}%` : '—';
+  document.getElementById('stat-pomos').textContent = Tracker.pomodorosThisWeek();
+  document.getElementById('stat-vocab').textContent = Tracker.vocabStats().due;
+
+  // Goal + Today's plan
+  const goal = Tracker.getGoal();
+  if (goal && level) {
+    document.getElementById('goal-card').classList.remove('hidden');
+    const plan = computePlan(level, goal.targetLevel, goal.targetDate);
+    const daysLeft = Math.max(0, Math.ceil((new Date(goal.targetDate) - new Date()) / (1000*60*60*24)));
+    document.getElementById('goal-content').innerHTML = `
+      <p style="margin-bottom: 12px;">
+        <strong>${level}</strong> → <strong style="color: var(--accent);">${goal.targetLevel}</strong>
+        en <strong>${daysLeft}</strong> días (${plan.weeks} semanas).
+        Requiere <strong>${plan.hoursPerWeek}h/semana</strong>.
+      </p>
+      <h3>📅 Tu plan para hoy</h3>
+      <p style="color: var(--muted); margin-bottom: 12px;">${plan.session.totalMinutes} minutos divididos así:</p>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
+        <a href="speaking.html" class="stat-box" style="text-decoration: none; background: rgba(99,102,241,0.15);">
+          <div class="num" style="color: var(--primary);">🎤 ${plan.session.speakingMinutes}'</div>
+          <div class="lab">Speaking</div>
+        </a>
+        <a href="writing.html" class="stat-box" style="text-decoration: none; background: rgba(245,158,11,0.15);">
+          <div class="num" style="color: var(--warning);">✍️ ${plan.session.writingMinutes}'</div>
+          <div class="lab">Writing</div>
+        </a>
+        <a href="vocab.html" class="stat-box" style="text-decoration: none; background: rgba(6,182,212,0.15);">
+          <div class="num" style="color: var(--accent);">📚 ${plan.vocabPerDay}</div>
+          <div class="lab">Vocab cards</div>
+        </a>
+      </div>
+      <p style="margin-top: 12px; font-size: 0.85rem; color: var(--muted);">
+        💡 Tip: usa el 🍅 widget abajo a la derecha en cada práctica para trabajar en bloques de 25 min.
+      </p>
+    `;
+  } else if (level) {
+    document.getElementById('no-goal-card').classList.remove('hidden');
+  }
 
   // Nav streak
   if (streak > 0) {
