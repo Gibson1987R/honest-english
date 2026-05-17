@@ -21,6 +21,7 @@ const Tracker = {
     return {
       testHistory: [],
       speakingHistory: [],
+      writingHistory: [],
       startDate: new Date().toISOString()
     };
   },
@@ -46,9 +47,35 @@ const Tracker = {
       level: session.level,
       promptText: session.promptText,
       score: session.score,
-      transcript: session.transcript
+      transcript: session.transcript,
+      mode: session.mode || 'webspeech'
     });
     this.save(data);
+  },
+
+  recordWritingSession(session) {
+    const data = this.load();
+    if (!data.writingHistory) data.writingHistory = [];
+    data.writingHistory.push({
+      date: new Date().toISOString(),
+      level: session.level,
+      promptText: session.promptText,
+      studentText: session.studentText,
+      score: session.score,
+      feedback: session.feedback
+    });
+    this.save(data);
+  },
+
+  totalWritingSessions() {
+    return (this.load().writingHistory || []).length;
+  },
+
+  daysSinceLastWriting() {
+    const data = this.load();
+    const hist = data.writingHistory || [];
+    if (!hist.length) return Infinity;
+    return this.daysSince(hist[hist.length - 1].date);
   },
 
   reset() {

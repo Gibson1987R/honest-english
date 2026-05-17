@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>honest-english · Writing Practice</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="index.html">🎯 honest-english</a>
+  <div class="links">
+    <a href="index.html">Dashboard</a>
+    <a href="test.html">Test CEFR</a>
+    <a href="speaking.html">Speaking</a>
+    <a href="writing.html" class="active">Writing</a>
+    <a href="settings.html">Settings</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<header>
+  <h1>✍️ Writing Practice</h1>
+  <p class="subtitle">Feedback honesto de Claude sobre tu escritura, no aplausos vacíos.</p>
+</header>
+
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom: 16px;">
+    <div>
+      <label for="w-level-select" style="color:var(--muted); font-size: 0.85rem;">Nivel:</label>
+      <select id="w-level-select" onchange="loadRandomPrompt()" style="background:var(--bg-2); color:var(--text); border:1px solid var(--border); padding:6px 10px; border-radius:6px; margin-left:6px;"></select>
+    </div>
+    <button class="btn btn-secondary btn-small" onclick="loadRandomPrompt()">🎲 Otro prompt</button>
+  </div>
+
+  <h3>📝 Prompt</h3>
+  <div class="question-context" id="w-prompt-text">Loading...</div>
+  <p style="color: var(--muted); font-size: 0.85rem; margin: 8px 0 16px;">Objetivo: <span id="w-min-max"></span></p>
+
+  <textarea id="w-textarea" rows="10" placeholder="Escribe tu respuesta en inglés aquí..."
+    style="width:100%; background:var(--bg-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:12px; font-family:inherit; font-size:1rem; resize:vertical;"></textarea>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; flex-wrap:wrap; gap:8px;">
+    <span style="color: var(--muted); font-size: 0.85rem;">📊 Palabras: <span id="w-word-count">0</span></span>
+    <button class="btn" id="w-submit-btn" onclick="submitForFeedback()">🔍 Enviar para feedback</button>
+  </div>
+</div>
+
+<div class="card hidden" id="w-feedback"></div>
+
+<div class="card">
+  <h2>🧠 Cómo funciona y limitaciones honestas</h2>
+  <ul style="margin-left: 20px; color: var(--muted); font-size: 0.9rem; line-height: 1.8;">
+    <li>Tu texto se envía a Claude (Anthropic) usando tu propia API key.</li>
+    <li>Claude evalúa: gramática, vocabulario, naturalidad, estructura.</li>
+    <li>El feedback incluye fortalezas reales, correcciones específicas, y UN próximo paso concreto.</li>
+    <li>No "edita por ti" — solo te muestra qué mejorar. Tú haces el trabajo.</li>
+    <li>Costo: ~$0.01 por revisión. Muy barato comparado con un tutor.</li>
+  </ul>
+</div>
+
+<footer>
+  honest-english · writing diario, feedback brutal pero útil
+</footer>
+
+</div>
+
+<script src="js/tracker.js"></script>
+<script src="js/api.js"></script>
+<script src="js/writing.js"></script>
+</body>
+</html>

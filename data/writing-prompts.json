@@ -1,0 +1,24 @@
+{
+  "A1": [
+    { "prompt": "Write 3-5 sentences about your family. Who do you live with? What do they do?", "minWords": 20, "maxWords": 60 },
+    { "prompt": "Describe your typical morning. What time do you wake up? What do you eat for breakfast?", "minWords": 20, "maxWords": 60 },
+    { "prompt": "Write about your favorite food. Why do you like it? When do you usually eat it?", "minWords": 20, "maxWords": 60 }
+  ],
+  "A2": [
+    { "prompt": "Write a short email to a coworker apologizing for missing a meeting yesterday. Explain why.", "minWords": 40, "maxWords": 100 },
+    { "prompt": "Describe what you did last weekend. Use at least three past-tense verbs.", "minWords": 40, "maxWords": 100 },
+    { "prompt": "Write a short message to a friend inviting them to dinner this Friday. Suggest a place and time.", "minWords": 40, "maxWords": 100 },
+    { "prompt": "Describe your current job or what you're studying. What do you do daily? What do you like and dislike?", "minWords": 50, "maxWords": 120 }
+  ],
+  "B1": [
+    { "prompt": "Write a short email asking for a day off from work. Give a brief reason and propose how you'll cover your tasks.", "minWords": 60, "maxWords": 150 },
+    { "prompt": "Describe a problem you recently solved at work or in your studies. What was it, and how did you fix it?", "minWords": 80, "maxWords": 180 },
+    { "prompt": "Compare working from an office vs working from home. Which do you prefer and why?", "minWords": 80, "maxWords": 200 },
+    { "prompt": "Write a short cover letter for an entry-level job in your field. Highlight 2-3 of your strengths.", "minWords": 100, "maxWords": 200 }
+  ],
+  "B2": [
+    { "prompt": "Argue for or against this statement: 'AI tools like ChatGPT make programmers more productive, not less skilled.' Give concrete examples.", "minWords": 120, "maxWords": 250 },
+    { "prompt": "Write a project retrospective: describe a project you worked on, what went well, what didn't, and what you'd do differently.", "minWords": 150, "maxWords": 300 },
+    { "prompt": "Imagine your boss asked you to evaluate a new tool the team should adopt. Write a recommendation: what tool, why it fits the team, and what tradeoffs to consider.", "minWords": 150, "maxWords": 300 }
+  ]
+}
