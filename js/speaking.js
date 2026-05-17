@@ -47,11 +47,21 @@ function loadSpecificPrompt(level, text, translation) {
 }
 
 function renderCurrentPrompt() {
-  document.getElementById('prompt-text').textContent = currentPrompt.text;
+  // Render the prompt with each word tappable for individual TTS
+  const words = currentPrompt.text.split(/(\s+)/);
+  const html = words.map(w => {
+    if (/^\s+$/.test(w)) return w;
+    const clean = w.replace(/[.,!?;:"'’]/g, '');
+    if (!clean) return w;
+    const safe = clean.replace(/'/g, "\\'");
+    return `<span class="prompt-word" onclick="speak('${safe}', 0.6)" title="Toca para escuchar esta palabra">${w}</span>`;
+  }).join('');
+  document.getElementById('prompt-text').innerHTML = html;
   document.getElementById('prompt-translation').textContent = currentPrompt.translation || '';
   document.getElementById('prompt-translation').classList.add('hidden');
   document.getElementById('show-translation-btn').textContent = '👁 Ver traducción';
   document.getElementById('result-area').classList.add('hidden');
+  updateDailyGoalDisplay();
 }
 
 // ===== Mode switching =====
@@ -353,6 +363,30 @@ function scoreAttempt(transcript, confidence, mode) {
 }
 
 // ===== Init =====
+function updateDailyGoalDisplay() {
+  const el = document.getElementById('daily-goal-display');
+  if (!el) return;
+  const doneToday = Tracker.speakingSessionsToday();
+  const goal = Tracker.getGoal();
+  let target = 5; // default daily target if no goal set
+  if (goal && typeof computePlan === 'function') {
+    const plan = computePlan(Tracker.currentLevel() || 'A2', goal.targetLevel, goal.targetDate);
+    // Estimate: ~30 sec per sentence attempt, divide speaking minutes
+    target = Math.max(3, Math.round(plan.session.speakingMinutes * 2));
+  }
+  const pct = Math.min(100, Math.round((doneToday / target) * 100));
+  const ok = doneToday >= target;
+  el.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; font-size: 0.9rem;">
+      <span><strong>Meta de hoy:</strong> ${doneToday}/${target} oraciones ${ok ? '✅' : ''}</span>
+      <span style="color: var(--muted); font-size: 0.8rem;">Streak: ${Tracker.speakingStreak()} días</span>
+    </div>
+    <div class="progress" style="margin: 6px 0 0;">
+      <div class="progress-fill" style="width: ${pct}%"></div>
+    </div>
+  `;
+}
+
 async function initSpeaking() {
   await loadPrompts();
   const hasWebSpeech = initRecognition();

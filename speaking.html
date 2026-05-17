@@ -45,12 +45,17 @@
   <div id="speak-list-area" class="hidden"></div>
 
   <div id="speak-practice-area">
+  <div id="daily-goal-display" style="background: var(--bg-2); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px;"></div>
+
   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom: 16px;">
     <div>
       <label for="level-select" style="color:var(--muted); font-size: 0.85rem;">Nivel:</label>
       <select id="level-select" onchange="loadRandomPrompt()" style="background:var(--bg-2); color:var(--text); border:1px solid var(--border); padding:6px 10px; border-radius:6px; margin-left:6px;"></select>
     </div>
-    <button class="btn btn-secondary btn-small" onclick="loadRandomPrompt()">🎲 Otra frase aleatoria</button>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-secondary btn-small" onclick="loadRandomPrompt()">🎲 Aleatoria</button>
+      <button class="btn btn-success btn-small" onclick="loadRandomPrompt()" title="Saltar a la siguiente">➡️ Siguiente</button>
+    </div>
   </div>
 
   <label id="whisper-toggle-label" class="hidden" style="display:flex; align-items:center; gap:8px; margin-bottom:12px; color:var(--accent); font-size:0.9rem;">
@@ -73,6 +78,9 @@
 
   <p style="text-align:center; color: var(--muted); font-size: 0.85rem;">
     Presiona <strong>Grabar</strong>, di la frase en inglés, presiona <strong>Detener</strong>. Comparamos lo que dijiste con lo esperado.
+  </p>
+  <p style="text-align:center; color: var(--accent); font-size: 0.8rem; margin-top: 6px;">
+    💡 Toca cualquier palabra del enunciado arriba para escuchar su pronunciación individual.
   </p>
 
   <div id="result-area" class="speak-result hidden"></div>

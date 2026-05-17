@@ -161,6 +161,7 @@ const Tracker = {
     const card = (data.vocabPool || []).find(v => v.word === word);
     if (!card) return;
     card.reviews++;
+    card.lastReviewedAt = new Date().toISOString();
     // SM-2 lite: rating 1=hard, 2=fail, 3=good, 4=easy
     if (rating <= 2) {
       card.interval = 1;
@@ -175,6 +176,8 @@ const Tracker = {
     next.setDate(next.getDate() + card.interval);
     card.due = next.toISOString();
     if (card.reviews >= 5 && card.interval >= 14) card.mastered = true;
+    if (!data.vocabReviewsLog) data.vocabReviewsLog = [];
+    data.vocabReviewsLog.push({ date: card.lastReviewedAt, word, rating });
     this.save(data);
   },
 
@@ -268,6 +271,25 @@ const Tracker = {
 
   totalSpeakingSessions() {
     return this.load().speakingHistory.length;
+  },
+
+  speakingSessionsToday() {
+    const data = this.load();
+    const today = new Date().toISOString().slice(0, 10);
+    return (data.speakingHistory || []).filter(s => s.date.slice(0, 10) === today).length;
+  },
+
+  writingSessionsToday() {
+    const data = this.load();
+    const today = new Date().toISOString().slice(0, 10);
+    return (data.writingHistory || []).filter(s => s.date.slice(0, 10) === today).length;
+  },
+
+  vocabReviewedToday() {
+    const data = this.load();
+    const log = data.vocabReviewsLog || [];
+    const today = new Date().toISOString().slice(0, 10);
+    return log.filter(r => r.date.slice(0, 10) === today).length;
   },
 
   avgSpeakingScore(lastN = 10) {
