@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>honest-english · Goal & Plan</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="index.html">🎯 honest-english</a>
+  <div class="links">
+    <a href="index.html">Dashboard</a>
+    <a href="goal.html" class="active">Goal</a>
+    <a href="test.html">Test CEFR</a>
+    <a href="speaking.html">Speaking</a>
+    <a href="writing.html">Writing</a>
+    <a href="vocab.html">Vocab</a>
+    <a href="settings.html">Settings</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<header>
+  <h1>🎯 Tu meta real</h1>
+  <p class="subtitle">Sin metas concretas, "aprender inglés" es infinito. Aquí la matemática honesta.</p>
+</header>
+
+<div class="card">
+  <h2>📍 ¿De dónde a dónde?</h2>
+  <p style="color: var(--muted); margin-bottom: 16px;">
+    Tu nivel actual (detectado por test): <strong id="current-level" style="color: var(--accent);">—</strong>
+    <span style="font-size: 0.85rem;">(<a href="test.html" style="color: var(--muted);">re-hacer test</a>)</span>
+  </p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+    <div>
+      <label style="color: var(--muted); font-size: 0.85rem;">🎯 Nivel objetivo</label>
+      <select id="target-level-select" style="width:100%; padding:10px; background:var(--bg-2); color:var(--text); border:1px solid var(--border); border-radius:6px; margin-top: 4px;">
+        <option value="A1">A1</option>
+        <option value="A2">A2</option>
+        <option value="B1">B1 (mínimo útil para trabajo)</option>
+        <option value="B2">B2 (umbral profesional)</option>
+        <option value="C1">C1 (avanzado)</option>
+        <option value="C2">C2 (maestría)</option>
+      </select>
+    </div>
+    <div>
+      <label style="color: var(--muted); font-size: 0.85rem;">📅 Fecha objetivo</label>
+      <input type="date" id="target-date" style="width:100%; padding:10px; background:var(--bg-2); color:var(--text); border:1px solid var(--border); border-radius:6px; margin-top: 4px;">
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 8px; align-items: center;">
+    <button class="btn" onclick="saveGoal()">💾 Guardar meta</button>
+    <button class="btn btn-secondary btn-small" onclick="clearGoal()">🗑 Borrar meta</button>
+    <span id="save-status" style="color: var(--success);"></span>
+  </div>
+</div>
+
+<div class="card">
+  <h2>📊 Tu plan calculado</h2>
+  <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">
+    Basado en benchmarks reales del Marco Común Europeo (Cambridge).
+    Los números cambian al ajustar tu objetivo arriba.
+  </p>
+  <div id="plan-output"></div>
+</div>
+
+<div class="card" style="border-color: var(--accent);">
+  <h2>💡 Cómo se usan estos números</h2>
+  <ul style="margin-left: 20px; color: var(--muted); font-size: 0.9rem; line-height: 1.8;">
+    <li><strong>Horas totales:</strong> estimación basada en investigación del Cambridge English; varía por persona.</li>
+    <li><strong>Horas/semana:</strong> divide horas totales por semanas hasta tu fecha.</li>
+    <li><strong>Palabras a aprender:</strong> brecha entre vocab de tu nivel actual y el objetivo (A2≈2000, B1≈3500, B2≈6000).</li>
+    <li><strong>Distribución por sesión:</strong> 40% speaking, 25% writing, 25% vocab, 10% listening — pesa speaking porque es donde más se atrofia.</li>
+  </ul>
+</div>
+
+<footer>
+  honest-english · metas concretas, no aspiracionales
+</footer>
+
+</div>
+
+<script src="js/tracker.js"></script>
+<script src="js/goal.js"></script>
+</body>
+</html>

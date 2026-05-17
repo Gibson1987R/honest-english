@@ -22,6 +22,9 @@ const Tracker = {
       testHistory: [],
       speakingHistory: [],
       writingHistory: [],
+      pomodoroHistory: [],
+      vocabPool: [],
+      goal: null,
       startDate: new Date().toISOString()
     };
   },
@@ -76,6 +79,109 @@ const Tracker = {
     const hist = data.writingHistory || [];
     if (!hist.length) return Infinity;
     return this.daysSince(hist[hist.length - 1].date);
+  },
+
+  // ===== Goal =====
+  setGoal(goal) {
+    const data = this.load();
+    data.goal = {
+      targetLevel: goal.targetLevel,
+      targetDate: goal.targetDate,
+      createdAt: new Date().toISOString()
+    };
+    this.save(data);
+  },
+
+  getGoal() {
+    return this.load().goal || null;
+  },
+
+  clearGoal() {
+    const data = this.load();
+    data.goal = null;
+    this.save(data);
+  },
+
+  // ===== Pomodoros =====
+  recordPomodoro(durationMinutes) {
+    const data = this.load();
+    if (!data.pomodoroHistory) data.pomodoroHistory = [];
+    data.pomodoroHistory.push({
+      date: new Date().toISOString(),
+      duration: durationMinutes
+    });
+    this.save(data);
+  },
+
+  pomodorosThisWeek() {
+    const data = this.load();
+    const hist = data.pomodoroHistory || [];
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    return hist.filter(p => new Date(p.date) >= weekAgo).length;
+  },
+
+  totalPomodoros() {
+    return (this.load().pomodoroHistory || []).length;
+  },
+
+  // ===== Vocab pool (smart cards with SM-2) =====
+  addToVocabPool(word, source, context) {
+    const data = this.load();
+    if (!data.vocabPool) data.vocabPool = [];
+    const lower = word.toLowerCase().trim();
+    const existing = data.vocabPool.find(v => v.word === lower);
+    if (existing) return false;
+    data.vocabPool.push({
+      word: lower,
+      source: source,
+      context: context || '',
+      addedAt: new Date().toISOString(),
+      due: new Date().toISOString(),
+      interval: 0,
+      easeFactor: 2.5,
+      reviews: 0,
+      mastered: false
+    });
+    this.save(data);
+    return true;
+  },
+
+  reviewVocabCard(word, rating) {
+    const data = this.load();
+    const card = (data.vocabPool || []).find(v => v.word === word);
+    if (!card) return;
+    card.reviews++;
+    // SM-2 lite: rating 1=hard, 2=fail, 3=good, 4=easy
+    if (rating <= 2) {
+      card.interval = 1;
+      card.easeFactor = Math.max(1.3, card.easeFactor - 0.2);
+    } else {
+      if (card.interval === 0) card.interval = 1;
+      else if (card.interval === 1) card.interval = 3;
+      else card.interval = Math.round(card.interval * card.easeFactor);
+      if (rating === 4) card.easeFactor = Math.min(3.0, card.easeFactor + 0.15);
+    }
+    const next = new Date();
+    next.setDate(next.getDate() + card.interval);
+    card.due = next.toISOString();
+    if (card.reviews >= 5 && card.interval >= 14) card.mastered = true;
+    this.save(data);
+  },
+
+  dueVocabCards() {
+    const data = this.load();
+    const now = new Date();
+    return (data.vocabPool || []).filter(v => !v.mastered && new Date(v.due) <= now);
+  },
+
+  vocabStats() {
+    const pool = this.load().vocabPool || [];
+    return {
+      total: pool.length,
+      mastered: pool.filter(v => v.mastered).length,
+      due: this.dueVocabCards().length
+    };
   },
 
   reset() {
