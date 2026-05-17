@@ -35,9 +35,9 @@
   <div class="label" id="msg-label">cargando…</div>
 </div>
 
-<!-- GOAL & TODAY'S PLAN -->
-<div class="card hidden" id="goal-card" style="border-color: var(--accent);">
-  <h2>🎯 Tu meta y plan de hoy</h2>
+<!-- TODAY'S PLAN — PROMINENT, FIRST -->
+<div class="card hidden" id="goal-card" style="border-color: var(--accent); border-width: 2px;">
+  <h2>🎯 META DE HOY</h2>
   <div id="goal-content"></div>
 </div>
 
@@ -46,6 +46,21 @@
   <h2>🎯 Aún no tienes meta</h2>
   <p style="color: var(--muted); margin-bottom: 12px;">Sin meta concreta, no hay plan. Fíjala en 1 minuto.</p>
   <a href="goal.html" class="btn">Fijar mi meta CEFR →</a>
+</div>
+
+<!-- POMODOROS SECTION -->
+<div class="card hidden" id="pomo-section" style="border-color: rgba(245, 158, 11, 0.5);">
+  <h2>🍅 Pomodoros</h2>
+  <div id="pomo-progress" style="margin-bottom: 12px;"></div>
+  <div class="summary-grid">
+    <div class="stat-box"><div class="num" id="pomo-today">0</div><div class="lab">🍅 Hoy</div></div>
+    <div class="stat-box"><div class="num" id="pomo-target">—</div><div class="lab">🎯 Meta diaria</div></div>
+    <div class="stat-box"><div class="num" id="pomo-week">0</div><div class="lab">📅 Esta semana</div></div>
+    <div class="stat-box"><div class="num" id="pomo-total">0</div><div class="lab">📊 Total histórico</div></div>
+  </div>
+  <p style="color: var(--muted); font-size: 0.85rem; margin-top: 12px;">
+    💡 El widget 🍅 está disponible en Speaking, Writing y Vocab. Cuenta solo pomodoros completos (25 min sin pausar).
+  </p>
 </div>
 
 <!-- STATS -->
@@ -58,23 +73,23 @@
     </div>
     <div class="stat-box">
       <div class="num" id="stat-sessions">0</div>
-      <div class="lab">Sesiones de speaking</div>
+      <div class="lab">Sesiones speaking</div>
     </div>
     <div class="stat-box">
       <div class="num" id="stat-streak">0</div>
-      <div class="lab">Días consecutivos</div>
+      <div class="lab">Días streak</div>
     </div>
     <div class="stat-box">
       <div class="num" id="stat-avg">—</div>
-      <div class="lab">Score promedio speaking</div>
-    </div>
-    <div class="stat-box">
-      <div class="num" id="stat-pomos">0</div>
-      <div class="lab">🍅 Pomos esta semana</div>
+      <div class="lab">Score promedio</div>
     </div>
     <div class="stat-box">
       <div class="num" id="stat-vocab">0</div>
-      <div class="lab">📚 Vocab cards pendientes</div>
+      <div class="lab">📚 Vocab pendientes</div>
+    </div>
+    <div class="stat-box">
+      <div class="num" id="stat-vocab-mastered">0</div>
+      <div class="lab">✓ Vocab dominadas</div>
     </div>
   </div>
 </div>
@@ -129,6 +144,7 @@ async function initDashboard() {
   const sessions = Tracker.totalSpeakingSessions();
   const avgScore = Tracker.avgSpeakingScore();
   const msg = Tracker.honestMessage();
+  const vocabStats = Tracker.vocabStats();
 
   // Honest message card
   const card = document.getElementById('honest-msg');
@@ -144,48 +160,71 @@ async function initDashboard() {
   document.getElementById('stat-sessions').textContent = sessions;
   document.getElementById('stat-streak').textContent = streak;
   document.getElementById('stat-avg').textContent = avgScore !== null ? `${avgScore}%` : '—';
-  document.getElementById('stat-pomos').textContent = Tracker.pomodorosThisWeek();
-  document.getElementById('stat-vocab').textContent = Tracker.vocabStats().due;
-
-  // Goal + Today's plan
-  const goal = Tracker.getGoal();
-  if (goal && level) {
-    document.getElementById('goal-card').classList.remove('hidden');
-    const plan = computePlan(level, goal.targetLevel, goal.targetDate);
-    const daysLeft = Math.max(0, Math.ceil((new Date(goal.targetDate) - new Date()) / (1000*60*60*24)));
-    document.getElementById('goal-content').innerHTML = `
-      <p style="margin-bottom: 12px;">
-        <strong>${level}</strong> → <strong style="color: var(--accent);">${goal.targetLevel}</strong>
-        en <strong>${daysLeft}</strong> días (${plan.weeks} semanas).
-        Requiere <strong>${plan.hoursPerWeek}h/semana</strong>.
-      </p>
-      <h3>📅 Tu plan para hoy</h3>
-      <p style="color: var(--muted); margin-bottom: 12px;">${plan.session.totalMinutes} minutos divididos así:</p>
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
-        <a href="speaking.html" class="stat-box" style="text-decoration: none; background: rgba(99,102,241,0.15);">
-          <div class="num" style="color: var(--primary);">🎤 ${plan.session.speakingMinutes}'</div>
-          <div class="lab">Speaking</div>
-        </a>
-        <a href="writing.html" class="stat-box" style="text-decoration: none; background: rgba(245,158,11,0.15);">
-          <div class="num" style="color: var(--warning);">✍️ ${plan.session.writingMinutes}'</div>
-          <div class="lab">Writing</div>
-        </a>
-        <a href="vocab.html" class="stat-box" style="text-decoration: none; background: rgba(6,182,212,0.15);">
-          <div class="num" style="color: var(--accent);">📚 ${plan.vocabPerDay}</div>
-          <div class="lab">Vocab cards</div>
-        </a>
-      </div>
-      <p style="margin-top: 12px; font-size: 0.85rem; color: var(--muted);">
-        💡 Tip: usa el 🍅 widget abajo a la derecha en cada práctica para trabajar en bloques de 25 min.
-      </p>
-    `;
-  } else if (level) {
-    document.getElementById('no-goal-card').classList.remove('hidden');
-  }
+  document.getElementById('stat-vocab').textContent = vocabStats.due;
+  document.getElementById('stat-vocab-mastered').textContent = vocabStats.mastered;
 
   // Nav streak
   if (streak > 0) {
     document.getElementById('nav-streak').textContent = `🔥 ${streak} día${streak > 1 ? 's' : ''}`;
+  }
+
+  // Goal + Today's plan + Pomodoros
+  const goal = Tracker.getGoal();
+  if (goal && level) {
+    document.getElementById('goal-card').classList.remove('hidden');
+    document.getElementById('pomo-section').classList.remove('hidden');
+
+    const plan = computePlan(level, goal.targetLevel, goal.targetDate);
+    const daysLeft = Math.max(0, Math.ceil((new Date(goal.targetDate) - new Date()) / (1000*60*60*24)));
+    const pomoTarget = Math.max(1, Math.round(plan.session.totalMinutes / 25));
+
+    document.getElementById('goal-content').innerHTML = `
+      <div style="background: var(--bg-2); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <p style="margin-bottom: 8px;">
+          <strong style="font-size: 1.1rem;">${level}</strong>
+          <span style="color: var(--muted)">→</span>
+          <strong style="color: var(--accent); font-size: 1.1rem;">${goal.targetLevel}</strong>
+        </p>
+        <p style="color: var(--muted); font-size: 0.9rem;">
+          📅 <strong>${daysLeft}</strong> días (${plan.weeks} semanas) · ⏱ Requiere <strong>${plan.hoursPerWeek}h/semana</strong>
+        </p>
+        ${goal.motivation ? `<p style="color: var(--muted); font-size: 0.85rem; margin-top: 8px; font-style: italic;">💭 "${goal.motivation}"</p>` : ''}
+      </div>
+
+      <h3 style="color: var(--accent); margin-bottom: 12px;">📅 Hoy: ${plan.session.totalMinutes} minutos divididos así</h3>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
+        <a href="speaking.html" class="stat-box" style="text-decoration: none; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3);">
+          <div class="num" style="color: var(--primary);">🎤 ${plan.session.speakingMinutes}'</div>
+          <div class="lab">Speaking</div>
+        </a>
+        <a href="writing.html" class="stat-box" style="text-decoration: none; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3);">
+          <div class="num" style="color: var(--warning);">✍️ ${plan.session.writingMinutes}'</div>
+          <div class="lab">Writing</div>
+        </a>
+        <a href="vocab.html" class="stat-box" style="text-decoration: none; background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3);">
+          <div class="num" style="color: var(--accent);">📚 ${plan.vocabPerDay}</div>
+          <div class="lab">Vocab cards</div>
+        </a>
+      </div>
+    `;
+
+    // Pomodoro section
+    const pomoToday = Tracker.pomodorosToday();
+    const pct = Math.min(100, Math.round((pomoToday / pomoTarget) * 100));
+    document.getElementById('pomo-today').textContent = pomoToday;
+    document.getElementById('pomo-target').textContent = pomoTarget;
+    document.getElementById('pomo-week').textContent = Tracker.pomodorosThisWeek();
+    document.getElementById('pomo-total').textContent = Tracker.totalPomodoros();
+    document.getElementById('pomo-progress').innerHTML = `
+      <div style="margin-bottom: 6px; font-size: 0.9rem;">
+        Hoy: <strong>${pomoToday}/${pomoTarget}</strong> pomodoros ${pomoToday >= pomoTarget ? '✅' : ''}
+      </div>
+      <div class="progress" style="margin: 0;">
+        <div class="progress-fill" style="width: ${pct}%; background: linear-gradient(90deg, #f59e0b, #fb923c);"></div>
+      </div>
+    `;
+  } else if (level) {
+    document.getElementById('no-goal-card').classList.remove('hidden');
   }
 
   // CTA logic
