@@ -36,11 +36,93 @@ function loadRandomPrompt() {
   }
   currentPromptIndex = Math.floor(Math.random() * pool.length);
   currentPrompt = pool[currentPromptIndex];
+  renderCurrentPrompt();
+}
+
+function loadSpecificPrompt(level, text, translation) {
+  currentLevel = level;
+  currentPrompt = { text, translation };
+  renderCurrentPrompt();
+  setSpeakMode('practice');
+}
+
+function renderCurrentPrompt() {
   document.getElementById('prompt-text').textContent = currentPrompt.text;
-  document.getElementById('prompt-translation').textContent = currentPrompt.translation;
+  document.getElementById('prompt-translation').textContent = currentPrompt.translation || '';
   document.getElementById('prompt-translation').classList.add('hidden');
   document.getElementById('show-translation-btn').textContent = '👁 Ver traducción';
   document.getElementById('result-area').classList.add('hidden');
+}
+
+// ===== Mode switching =====
+function setSpeakMode(mode) {
+  document.getElementById('btn-mode-practice').classList.toggle('active-mode', mode === 'practice');
+  document.getElementById('btn-mode-list').classList.toggle('active-mode', mode === 'list');
+  document.getElementById('btn-mode-vocab').classList.toggle('active-mode', mode === 'vocab');
+  document.getElementById('speak-practice-area').classList.toggle('hidden', mode !== 'practice');
+  document.getElementById('speak-list-area').classList.toggle('hidden', mode === 'practice');
+  if (mode === 'list') renderPromptList();
+  if (mode === 'vocab') renderVocabList();
+}
+
+function renderPromptList() {
+  let html = `<p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 12px;">
+    Todas las frases disponibles agrupadas por nivel. Toca 🔊 para escuchar, ▶ para practicarla.
+  </p>`;
+  Object.keys(PROMPTS_BY_LEVEL).forEach(lvl => {
+    const pool = PROMPTS_BY_LEVEL[lvl] || [];
+    html += `<h3 style="color: var(--accent); margin-top: 20px;">${lvl} <span style="color: var(--muted); font-size: 0.8rem; font-weight: normal;">(${pool.length} frases)</span></h3>`;
+    html += `<div style="display: flex; flex-direction: column; gap: 6px;">`;
+    pool.forEach(p => {
+      const safeText = p.text.replace(/'/g, "\\'");
+      const safeTrans = (p.translation || '').replace(/'/g, "\\'");
+      html += `
+        <div style="display: flex; gap: 8px; align-items: center; padding: 10px; background: var(--bg-2); border-radius: 6px;">
+          <button class="btn btn-secondary btn-small" style="padding: 4px 8px; flex-shrink: 0;" onclick="speak('${safeText}')">🔊</button>
+          <button class="btn btn-small" style="padding: 4px 8px; flex-shrink: 0;" onclick="loadSpecificPrompt('${lvl}', '${safeText}', '${safeTrans}')">▶</button>
+          <div style="flex: 1; min-width: 0;">
+            <div>${p.text}</div>
+            <div style="color: var(--muted); font-size: 0.8rem; font-style: italic;">${p.translation || ''}</div>
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  });
+  document.getElementById('speak-list-area').innerHTML = html;
+}
+
+function renderVocabList() {
+  if (typeof Tracker === 'undefined') return;
+  const recent = Tracker.recentlyReviewedWords(7);
+  if (!recent.length) {
+    document.getElementById('speak-list-area').innerHTML = `
+      <div style="text-align: center; padding: 30px;">
+        <p style="color: var(--muted); margin-bottom: 16px;">
+          No has repasado palabras en los últimos 7 días. Ve a Vocab primero, repasa algunas, y vuelve aquí para practicar pronunciación.
+        </p>
+        <a href="vocab.html" class="btn">📚 Ir a Vocab</a>
+      </div>
+    `;
+    return;
+  }
+  let html = `<p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 12px;">
+    🔁 <strong>${recent.length}</strong> palabras que repasaste recientemente. Practica su pronunciación: toca 🔊 para escuchar, ▶ para grabarte diciéndola.
+  </p>`;
+  html += `<div style="display: flex; flex-direction: column; gap: 6px;">`;
+  recent.forEach(card => {
+    const word = card.word;
+    html += `
+      <div style="display: flex; gap: 8px; align-items: center; padding: 10px; background: var(--bg-2); border-radius: 6px;">
+        <button class="btn btn-secondary btn-small" style="padding: 4px 8px; flex-shrink: 0;" onclick="speak('${word}')">🔊</button>
+        <button class="btn btn-small" style="padding: 4px 8px; flex-shrink: 0;" onclick="loadSpecificPrompt('vocab', '${word}', '')">▶ Practicar</button>
+        <div style="flex: 1; font-size: 1.1rem; font-weight: 500; color: var(--accent);">${word}</div>
+        <div style="color: var(--muted); font-size: 0.85rem;">${card.reviews} repasos · int ${card.interval}d</div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  document.getElementById('speak-list-area').innerHTML = html;
 }
 
 function toggleTranslation() {
@@ -50,28 +132,26 @@ function toggleTranslation() {
   btn.textContent = t.classList.contains('hidden') ? '👁 Ver traducción' : '🙈 Ocultar traducción';
 }
 
-function speakPrompt() {
-  if (!currentPrompt) return;
+function speak(text, rate = 0.9) {
+  if (!window.speechSynthesis) return;
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(currentPrompt.text);
+  const u = new SpeechSynthesisUtterance(text);
   u.lang = 'en-US';
-  u.rate = 0.9;
+  u.rate = rate;
   const voices = speechSynthesis.getVoices();
   const en = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Alex') || v.name.includes('Google US English'))) || voices.find(v => v.lang.startsWith('en'));
   if (en) u.voice = en;
   speechSynthesis.speak(u);
 }
 
+function speakPrompt() {
+  if (!currentPrompt) return;
+  speak(currentPrompt.text, 0.9);
+}
+
 function speakSlow() {
   if (!currentPrompt) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(currentPrompt.text);
-  u.lang = 'en-US';
-  u.rate = 0.6;
-  const voices = speechSynthesis.getVoices();
-  const en = voices.find(v => v.lang.startsWith('en'));
-  if (en) u.voice = en;
-  speechSynthesis.speak(u);
+  speak(currentPrompt.text, 0.6);
 }
 
 // ===== Web Speech API mode =====
@@ -217,12 +297,21 @@ function scoreAttempt(transcript, confidence, mode) {
     extra: !expectedWords.includes(w)
   }));
 
-  const expectedHtml = expectedWords.map((w, i) =>
-    `<span class="transcript-word ${matches[i] ? 'ok' : 'missing'}">${w}</span>`
-  ).join(' ');
-  const spokenHtml = spokenStatus.map(s =>
-    `<span class="transcript-word ${s.extra ? 'bad' : 'ok'}">${s.word}</span>`
-  ).join(' ');
+  const expectedHtml = expectedWords.map((w, i) => {
+    if (matches[i]) {
+      return `<span class="transcript-word ok">${w}</span>`;
+    } else {
+      // Missed word — make it tappable to hear pronunciation
+      return `<button class="transcript-word missing" onclick="speak('${w.replace(/'/g, "\\'")}', 0.6)" style="border:none; cursor:pointer; font-size: inherit; font-family: inherit;" title="Click para escuchar la pronunciación correcta">🔊 ${w}</button>`;
+    }
+  }).join(' ');
+  const spokenHtml = spokenStatus.map(s => {
+    if (s.extra) {
+      // Extra word the user said — also clickable so they can hear it
+      return `<button class="transcript-word bad" onclick="speak('${s.word.replace(/'/g, "\\'")}', 0.6)" style="border:none; cursor:pointer; font-size: inherit; font-family: inherit;">🔊 ${s.word}</button>`;
+    }
+    return `<span class="transcript-word ok">${s.word}</span>`;
+  }).join(' ');
 
   let scoreClass = 'low';
   let feedback = '';
@@ -250,7 +339,7 @@ function scoreAttempt(transcript, confidence, mode) {
       <button class="btn btn-success btn-small" onclick="loadRandomPrompt()">➡️ Siguiente frase</button>
     </div>
     <p style="margin-top: 12px; font-size: 0.8rem; color: var(--muted);">
-      💡 <strong>Verde</strong>: bien · <strong>Amarillo</strong>: faltó · <strong>Rojo tachado</strong>: dijiste algo extra.
+      💡 <strong>Verde</strong>: bien · <strong>Amarillo 🔊</strong>: faltó (toca para oír) · <strong>Rojo 🔊</strong>: extra (toca para oír cómo lo dijiste).
     </p>
   `;
 

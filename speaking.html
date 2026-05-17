@@ -36,6 +36,15 @@
 </div>
 
 <div class="card">
+  <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+    <button id="btn-mode-practice" class="btn btn-secondary btn-small active-mode" onclick="setSpeakMode('practice')">🎤 Modo práctica</button>
+    <button id="btn-mode-list" class="btn btn-secondary btn-small" onclick="setSpeakMode('list')">📋 Ver lista de frases</button>
+    <button id="btn-mode-vocab" class="btn btn-secondary btn-small" onclick="setSpeakMode('vocab')">🔁 Repasar palabras (recientes)</button>
+  </div>
+
+  <div id="speak-list-area" class="hidden"></div>
+
+  <div id="speak-practice-area">
   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom: 16px;">
     <div>
       <label for="level-select" style="color:var(--muted); font-size: 0.85rem;">Nivel:</label>
@@ -67,6 +76,7 @@
   </p>
 
   <div id="result-area" class="speak-result hidden"></div>
+  </div><!-- /speak-practice-area -->
 </div>
 
 <div class="card">
