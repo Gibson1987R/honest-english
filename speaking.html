@@ -14,6 +14,8 @@
     <a href="index.html">Dashboard</a>
     <a href="test.html">Test CEFR</a>
     <a href="speaking.html" class="active">Speaking</a>
+    <a href="writing.html">Writing</a>
+    <a href="settings.html">Settings</a>
   </div>
   <div class="streak" id="nav-streak"></div>
 </nav>
@@ -39,6 +41,11 @@
     </div>
     <button class="btn btn-secondary btn-small" onclick="loadRandomPrompt()">🎲 Otra frase aleatoria</button>
   </div>
+
+  <label id="whisper-toggle-label" class="hidden" style="display:flex; align-items:center; gap:8px; margin-bottom:12px; color:var(--accent); font-size:0.9rem;">
+    <input type="checkbox" id="whisper-toggle" checked>
+    🤖 Usar Whisper (más preciso · requiere OpenAI key en <a href="settings.html" style="color:var(--accent);">Settings</a>)
+  </label>
 
   <div class="speak-prompt" id="prompt-text">Loading...</div>
 
@@ -83,6 +90,7 @@
 </div>
 
 <script src="js/tracker.js"></script>
+<script src="js/api.js"></script>
 <script src="js/speaking.js"></script>
 <script>
 // Render speaking-specific stats

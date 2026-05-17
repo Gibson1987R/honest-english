@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>honest-english · Settings</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="index.html">🎯 honest-english</a>
+  <div class="links">
+    <a href="index.html">Dashboard</a>
+    <a href="test.html">Test CEFR</a>
+    <a href="speaking.html">Speaking</a>
+    <a href="writing.html">Writing</a>
+    <a href="settings.html" class="active">Settings</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<header>
+  <h1>⚙️ Settings</h1>
+  <p class="subtitle">Bring Your Own Key (BYOK). Tus llaves se guardan SOLO en tu navegador.</p>
+</header>
+
+<div class="card" style="border-color: var(--accent);">
+  <h2>🔐 Honestidad sobre tu seguridad</h2>
+  <ul style="margin-left: 20px; color: var(--muted); font-size: 0.9rem; line-height: 1.8;">
+    <li>Tus API keys se guardan en <code>localStorage</code> de tu navegador, en este dispositivo.</li>
+    <li><strong>Nunca</strong> se envían a un servidor mío — esto es un sitio estático.</li>
+    <li>Llamadas a Whisper/Claude van <em>directo</em> desde tu navegador a OpenAI/Anthropic.</li>
+    <li>Si usas computadora compartida, no las guardes aquí.</li>
+    <li>Puedes borrarlas en cualquier momento con el botón "Reset".</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>🎤 OpenAI (para Whisper — mejor pronunciación)</h2>
+  <p style="color: var(--muted); margin-bottom: 12px; font-size: 0.9rem;">
+    Whisper transcribe tu voz con mucha más precisión que la API nativa del navegador.
+    Costo: ~$0.006 por minuto de audio. <a href="https://platform.openai.com/api-keys" target="_blank" style="color: var(--accent);">Obtener key →</a>
+  </p>
+  <input type="password" id="openai-key" placeholder="sk-..."
+    style="width:100%; padding:10px; background:var(--bg-2); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:monospace;">
+  <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+    <button class="btn btn-small" onclick="saveOpenAI()">💾 Guardar</button>
+    <button class="btn btn-secondary btn-small" onclick="testOpenAI()">🧪 Probar</button>
+    <button class="btn btn-danger btn-small" onclick="clearOpenAI()">🗑 Borrar</button>
+    <span id="openai-status" style="margin-left: 8px; align-self: center; color: var(--muted); font-size: 0.85rem;"></span>
+  </div>
+</div>
+
+<div class="card">
+  <h2>🧠 Anthropic (para Claude — preguntas dinámicas y writing feedback)</h2>
+  <p style="color: var(--muted); margin-bottom: 12px; font-size: 0.9rem;">
+    Claude genera preguntas frescas a tu nivel exacto y da feedback de tu writing.
+    Costo: muy bajo, fracciones de centavo por consulta. <a href="https://console.anthropic.com/" target="_blank" style="color: var(--accent);">Obtener key →</a>
+  </p>
+  <input type="password" id="anthropic-key" placeholder="sk-ant-..."
+    style="width:100%; padding:10px; background:var(--bg-2); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:monospace;">
+  <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+    <button class="btn btn-small" onclick="saveAnthropic()">💾 Guardar</button>
+    <button class="btn btn-secondary btn-small" onclick="testAnthropic()">🧪 Probar</button>
+    <button class="btn btn-danger btn-small" onclick="clearAnthropic()">🗑 Borrar</button>
+    <span id="anthropic-status" style="margin-left: 8px; align-self: center; color: var(--muted); font-size: 0.85rem;"></span>
+  </div>
+</div>
+
+<div class="card">
+  <h2>📊 Estado de features</h2>
+  <ul style="list-style:none; padding:0;">
+    <li style="padding: 8px; border-bottom: 1px solid var(--border);">
+      <strong>Phase 1 · CEFR Test</strong> — <span style="color: var(--success);">Activo (sin API)</span>
+    </li>
+    <li style="padding: 8px; border-bottom: 1px solid var(--border);">
+      <strong>Phase 1 · Speaking (Web Speech API)</strong> — <span style="color: var(--success);">Activo (sin API)</span>
+    </li>
+    <li style="padding: 8px; border-bottom: 1px solid var(--border);">
+      <strong>Phase 2 · Speaking (Whisper)</strong> — <span id="status-whisper" class="status-tag"></span>
+    </li>
+    <li style="padding: 8px; border-bottom: 1px solid var(--border);">
+      <strong>Phase 3 · Dynamic questions</strong> — <span id="status-dynq" class="status-tag"></span>
+    </li>
+    <li style="padding: 8px;">
+      <strong>Phase 4 · Writing feedback</strong> — <span id="status-writing" class="status-tag"></span>
+    </li>
+  </ul>
+</div>
+
+<footer>
+  honest-english · tus keys, tu control
+</footer>
+
+</div>
+
+<script src="js/api.js"></script>
+<script>
+function loadInputs() {
+  const keys = ApiKeys.load();
+  if (keys.openai) document.getElementById('openai-key').value = keys.openai;
+  if (keys.anthropic) document.getElementById('anthropic-key').value = keys.anthropic;
+  updateStatus();
+}
+function updateStatus() {
+  const open = ApiKeys.hasOpenAI();
+  const anth = ApiKeys.hasAnthropic();
+  const tag = (active) => active
+    ? '<span style="color: var(--success);">✓ Activo</span>'
+    : '<span style="color: var(--muted);">— Inactivo (agrega tu key)</span>';
+  document.getElementById('status-whisper').innerHTML = tag(open);
+  document.getElementById('status-dynq').innerHTML = tag(anth);
+  document.getElementById('status-writing').innerHTML = tag(anth);
+}
+function saveOpenAI() {
+  const key = document.getElementById('openai-key').value.trim();
+  const keys = ApiKeys.load();
+  keys.openai = key;
+  ApiKeys.save(keys);
+  document.getElementById('openai-status').textContent = key ? '✓ Guardada' : '— Borrada';
+  updateStatus();
+}
+function clearOpenAI() {
+  document.getElementById('openai-key').value = '';
+  saveOpenAI();
+}
+async function testOpenAI() {
+  const key = document.getElementById('openai-key').value.trim();
+  if (!key) { document.getElementById('openai-status').textContent = '❌ Sin key'; return; }
+  document.getElementById('openai-status').textContent = '⏳ Probando...';
+  try {
+    const res = await fetch('https://api.openai.com/v1/models', {
+      headers: { 'Authorization': `Bearer ${key}` }
+    });
+    if (res.ok) {
+      document.getElementById('openai-status').textContent = '✅ Funciona';
+    } else {
+      document.getElementById('openai-status').textContent = `❌ Error ${res.status}`;
+    }
+  } catch (e) {
+    document.getElementById('openai-status').textContent = `❌ ${e.message}`;
+  }
+}
+function saveAnthropic() {
+  const key = document.getElementById('anthropic-key').value.trim();
+  const keys = ApiKeys.load();
+  keys.anthropic = key;
+  ApiKeys.save(keys);
+  document.getElementById('anthropic-status').textContent = key ? '✓ Guardada' : '— Borrada';
+  updateStatus();
+}
+function clearAnthropic() {
+  document.getElementById('anthropic-key').value = '';
+  saveAnthropic();
+}
+async function testAnthropic() {
+  const key = document.getElementById('anthropic-key').value.trim();
+  if (!key) { document.getElementById('anthropic-status').textContent = '❌ Sin key'; return; }
+  document.getElementById('anthropic-status').textContent = '⏳ Probando...';
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 10,
+        messages: [{ role: 'user', content: 'Hi' }]
+      })
+    });
+    if (res.ok) {
+      document.getElementById('anthropic-status').textContent = '✅ Funciona';
+    } else {
+      const err = await res.text();
+      document.getElementById('anthropic-status').textContent = `❌ Error ${res.status}: ${err.slice(0, 80)}`;
+    }
+  } catch (e) {
+    document.getElementById('anthropic-status').textContent = `❌ ${e.message}`;
+  }
+}
+loadInputs();
+</script>
+</body>
+</html>
