@@ -77,6 +77,17 @@ h1 { font-size: 2rem; margin-bottom: 8px; background: linear-gradient(90deg, #63
 .btn-small { padding: 8px 14px; font-size: 0.85rem; }
 .btn-danger { background: var(--danger); }
 .btn-success { background: var(--success); }
+.active-mode { background: var(--primary); border-color: var(--primary); }
+
+/* i18n based on user level — applied by adding lang-es / lang-bi / lang-en to body */
+body.lang-es .i18n-en { display: none; }
+body.lang-en .i18n-es { display: none; }
+body.lang-bi .i18n-es { display: block; color: var(--muted); font-size: 0.82em; margin-top: 2px; font-style: italic; }
+body.lang-bi label .i18n-es,
+body.lang-bi h1 .i18n-es,
+body.lang-bi h2 .i18n-es,
+body.lang-bi h3 .i18n-es,
+body.lang-bi p .i18n-es { display: inline; margin-left: 4px; }
 
 .progress {
   background: var(--bg-2);

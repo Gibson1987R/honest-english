@@ -87,7 +87,9 @@ const Tracker = {
     data.goal = {
       targetLevel: goal.targetLevel,
       targetDate: goal.targetDate,
-      createdAt: new Date().toISOString()
+      motivation: goal.motivation || '',
+      createdAt: data.goal?.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
     this.save(data);
   },
@@ -119,6 +121,13 @@ const Tracker = {
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
     return hist.filter(p => new Date(p.date) >= weekAgo).length;
+  },
+
+  pomodorosToday() {
+    const data = this.load();
+    const hist = data.pomodoroHistory || [];
+    const today = new Date().toISOString().slice(0, 10);
+    return hist.filter(p => p.date.slice(0, 10) === today).length;
   },
 
   totalPomodoros() {
@@ -182,6 +191,21 @@ const Tracker = {
       mastered: pool.filter(v => v.mastered).length,
       due: this.dueVocabCards().length
     };
+  },
+
+  // Words reviewed in the last N days — used to feed speaking practice
+  recentlyReviewedWords(days = 7) {
+    const pool = this.load().vocabPool || [];
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    return pool.filter(v => v.reviews > 0 && new Date(v.due) > cutoff);
+  },
+
+  allVocabWords() {
+    return (this.load().vocabPool || []).slice().sort((a, b) => {
+      if (a.mastered !== b.mastered) return a.mastered ? 1 : -1;
+      return new Date(a.due) - new Date(b.due);
+    });
   },
 
   reset() {

@@ -34,9 +34,14 @@
 </div>
 
 <div class="card">
+  <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+    <button id="btn-mode-review" class="btn btn-secondary btn-small active-mode" onclick="setMode('review')">🎴 Modo repaso</button>
+    <button id="btn-mode-list" class="btn btn-secondary btn-small" onclick="setMode('list')">📋 Ver lista completa</button>
+  </div>
   <div id="card-area" style="min-height: 280px;">
     <p style="text-align:center; color: var(--muted);">Cargando...</p>
   </div>
+  <div id="list-area" class="hidden"></div>
 </div>
 
 <div class="card">

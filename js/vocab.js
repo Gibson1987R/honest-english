@@ -1,9 +1,9 @@
-// vocab.js — smart vocab review (SM-2 lite)
+// vocab.js — smart vocab review (SM-2 lite) + list view
 
 let VOCAB_BY_LEVEL = {};
 let currentCard = null;
 let currentCardData = null;
-let revealed = false;
+let viewMode = 'review'; // 'review' | 'list'
 
 async function loadVocabData() {
   const res = await fetch('data/vocab-by-level.json');
@@ -45,9 +45,83 @@ function pickNextCard() {
   return due[Math.floor(Math.random() * due.length)];
 }
 
+function setMode(mode) {
+  viewMode = mode;
+  document.getElementById('btn-mode-review').classList.toggle('active-mode', mode === 'review');
+  document.getElementById('btn-mode-list').classList.toggle('active-mode', mode === 'list');
+  document.getElementById('card-area').classList.toggle('hidden', mode !== 'review');
+  document.getElementById('list-area').classList.toggle('hidden', mode !== 'list');
+  if (mode === 'review') renderCard();
+  else renderList();
+}
+
+function renderList() {
+  const all = Tracker.allVocabWords();
+  if (!all.length) {
+    document.getElementById('list-area').innerHTML = `
+      <p style="text-align:center; color: var(--muted); padding: 20px;">
+        No tienes palabras todavía. Haz el test o agrega palabras curadas para empezar.
+      </p>
+      <div style="text-align:center;">
+        <button class="btn" onclick="seedAndStart()">+ Agregar 10 palabras de mi nivel</button>
+      </div>
+    `;
+    return;
+  }
+  const rows = all.map(card => {
+    const data = vocabLookup(card.word) || { word: card.word, translation: '—', definition: '', example: '' };
+    const dueDate = new Date(card.due);
+    const dueLabel = card.mastered
+      ? '<span style="color: var(--success)">✓ Dominada</span>'
+      : (dueDate <= new Date()
+          ? '<span style="color: var(--warning)">⏰ Pendiente hoy</span>'
+          : `<span style="color: var(--muted)">en ${Math.ceil((dueDate - new Date())/(1000*60*60*24))}d</span>`);
+    const sourceLabel = {
+      'curated': '📋', 'test': '❌', 'writing': '✍️'
+    }[card.source] || '·';
+    return `
+      <tr style="border-bottom: 1px solid var(--border);">
+        <td style="padding: 10px 8px; vertical-align: top;">
+          <button class="btn btn-secondary btn-small" style="padding: 4px 10px;" onclick="speakWord('${data.word}')">🔊</button>
+        </td>
+        <td style="padding: 10px 8px;">
+          <strong style="color: var(--accent); font-size: 1.05rem;">${data.word}</strong><br>
+          <span style="color: var(--muted); font-size: 0.85rem;">${data.translation}</span>
+        </td>
+        <td style="padding: 10px 8px; color: var(--muted); font-size: 0.85rem;">
+          ${data.definition}<br>
+          <em>"${data.example}"</em>
+        </td>
+        <td style="padding: 10px 8px; font-size: 0.85rem;">
+          <div>${sourceLabel} · ${card.reviews} repasos</div>
+          <div>${dueLabel}</div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('list-area').innerHTML = `
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border); text-align: left; color: var(--muted); font-size: 0.8rem;">
+            <th style="padding: 8px;"></th>
+            <th style="padding: 8px;">WORD / TRADUCCIÓN</th>
+            <th style="padding: 8px;">DEFINICIÓN Y EJEMPLO</th>
+            <th style="padding: 8px;">ESTADO</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div style="text-align:center; margin-top: 20px;">
+      <button class="btn btn-secondary btn-small" onclick="seedAndStart()">+ Agregar 5 palabras más</button>
+    </div>
+  `;
+}
+
 function renderCard() {
   currentCard = pickNextCard();
-  revealed = false;
 
   if (!currentCard) {
     const stats = Tracker.vocabStats();
@@ -73,6 +147,7 @@ function renderCard() {
 
   currentCardData = vocabLookup(currentCard.word) || {
     word: currentCard.word,
+    translation: '—',
     definition: 'Definition not found — look it up.',
     example: currentCard.context || ''
   };
@@ -80,14 +155,17 @@ function renderCard() {
   document.getElementById('card-area').innerHTML = `
     <div style="text-align: center;">
       <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 8px;">
-        ${sourceLabel(currentCard.source)} · Repaso #${currentCard.reviews + 1} · Interval: ${currentCard.interval}d
+        ${sourceLabel(currentCard.source)} · Repaso #${currentCard.reviews + 1} · Próximo en ${currentCard.interval}d
       </div>
       <div style="font-size: 3rem; font-weight: 700; margin: 16px 0; color: var(--accent);">
         ${currentCardData.word}
       </div>
+      <div style="color: var(--muted); font-size: 0.95rem; margin-bottom: 12px;">
+        🇪🇸 <strong>${currentCardData.translation}</strong>
+      </div>
       <button class="btn btn-secondary btn-small" onclick="speakWord('${currentCardData.word}')">🔊 Escuchar</button>
       <div id="reveal-area" style="margin-top: 24px;">
-        <button class="btn" onclick="revealCard()">👁 Mostrar definición</button>
+        <button class="btn" onclick="revealCard()">👁 Mostrar definición y ejemplo</button>
       </div>
     </div>
   `;
@@ -102,7 +180,6 @@ function sourceLabel(source) {
 }
 
 function revealCard() {
-  revealed = true;
   document.getElementById('reveal-area').innerHTML = `
     <div style="background: var(--bg-2); padding: 20px; border-radius: 12px; margin-bottom: 16px; text-align: left;">
       <div style="color: var(--muted); font-size: 0.8rem; margin-bottom: 4px;">DEFINITION</div>
@@ -110,7 +187,7 @@ function revealCard() {
       <div style="color: var(--muted); font-size: 0.8rem; margin-bottom: 4px;">EXAMPLE</div>
       <div style="font-style: italic; color: var(--muted);">"${currentCardData.example}"</div>
       ${currentCard.context && currentCard.source !== 'curated' ? `
-        <div style="color: var(--muted); font-size: 0.8rem; margin-top: 12px;">CONTEXT (donde la fallaste)</div>
+        <div style="color: var(--muted); font-size: 0.8rem; margin-top: 12px;">CONTEXTO (donde la fallaste)</div>
         <div style="font-style: italic; color: var(--warning);">"${currentCard.context}"</div>
       ` : ''}
     </div>
@@ -147,11 +224,14 @@ function seedAndStart() {
     return;
   }
   alert(`✓ ${added} palabras agregadas a tu pool.`);
-  renderCard();
+  if (viewMode === 'review') renderCard();
+  else renderList();
+  updateStats();
 }
 
 function updateStats() {
   const stats = Tracker.vocabStats();
+  const recent = Tracker.recentlyReviewedWords(7).length;
   const goal = Tracker.getGoal();
   let vocabTarget = '';
   if (goal && typeof computePlan === 'function') {
@@ -162,6 +242,7 @@ function updateStats() {
     <div class="stat-box"><div class="num">${stats.due}</div><div class="lab">Pendientes hoy</div></div>
     <div class="stat-box"><div class="num">${stats.total - stats.mastered}</div><div class="lab">En curso</div></div>
     <div class="stat-box"><div class="num">${stats.mastered}</div><div class="lab">Dominadas</div></div>
+    <div class="stat-box"><div class="num">${recent}</div><div class="lab">Repasadas últ. 7d</div></div>
     ${vocabTarget}
   `;
 }
@@ -169,7 +250,7 @@ function updateStats() {
 async function init() {
   await loadVocabData();
   updateStats();
-  renderCard();
+  setMode('review');
 }
 
 init();
