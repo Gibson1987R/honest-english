@@ -12,9 +12,11 @@
   <a class="brand" href="index.html">🎯 honest-english</a>
   <div class="links">
     <a href="index.html" class="active">Dashboard</a>
+    <a href="goal.html">Goal</a>
     <a href="test.html">Test CEFR</a>
     <a href="speaking.html">Speaking</a>
     <a href="writing.html">Writing</a>
+    <a href="vocab.html">Vocab</a>
     <a href="settings.html">Settings</a>
   </div>
   <div class="streak" id="nav-streak"></div>
@@ -33,7 +35,48 @@
   <div class="label" id="msg-label">cargando…</div>
 </div>
 
-<!-- STATS -->
+<!-- TODAY'S PLAN — PROMINENT, FIRST -->
+<div class="card hidden" id="goal-card" style="border-color: var(--accent); border-width: 2px;">
+  <h2>🎯 META DE HOY</h2>
+  <div id="goal-content"></div>
+</div>
+
+<!-- NO-GOAL PROMPT -->
+<div class="card hidden" id="no-goal-card" style="border-color: var(--accent); border-style: dashed;">
+  <h2>🎯 Aún no tienes meta</h2>
+  <p style="color: var(--muted); margin-bottom: 12px;">Sin meta concreta, no hay plan. Fíjala en 1 minuto.</p>
+  <a href="goal.html" class="btn">Fijar mi meta CEFR →</a>
+</div>
+
+<!-- POMODOROS SECTION -->
+<div class="card hidden" id="pomo-section" style="border-color: rgba(245, 158, 11, 0.5);">
+  <h2>🍅 Pomodoros</h2>
+  <div id="pomo-progress" style="margin-bottom: 12px;"></div>
+  <div class="summary-grid">
+    <div class="stat-box"><div class="num" id="pomo-today">0</div><div class="lab">🍅 Hoy</div></div>
+    <div class="stat-box"><div class="num" id="pomo-target">—</div><div class="lab">🎯 Meta diaria</div></div>
+    <div class="stat-box"><div class="num" id="pomo-week">0</div><div class="lab">📅 Esta semana</div></div>
+    <div class="stat-box"><div class="num" id="pomo-total">0</div><div class="lab">📊 Total histórico</div></div>
+  </div>
+  <p style="color: var(--muted); font-size: 0.85rem; margin-top: 12px;">
+    💡 El widget 🍅 está disponible en Speaking, Writing y Vocab. Cuenta solo pomodoros completos (25 min sin pausar).
+  </p>
+</div>
+
+<!-- PER-SKILL METRICS -->
+<div class="card">
+  <h2>📈 Tu progreso por habilidad</h2>
+  <div id="skill-metrics"></div>
+</div>
+
+<!-- HISTORY -->
+<div class="card hidden" id="history-card">
+  <h2>📊 Histórico de tests</h2>
+  <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 12px;">Cada vez que haces el test queda guardado. Repítelo cada 4-6 semanas para ver evolución real.</p>
+  <div id="history-content"></div>
+</div>
+
+<!-- STATS (compact) -->
 <div class="card">
   <h2>📊 Tus números</h2>
   <div class="summary-grid">
@@ -43,15 +86,23 @@
     </div>
     <div class="stat-box">
       <div class="num" id="stat-sessions">0</div>
-      <div class="lab">Sesiones de speaking</div>
+      <div class="lab">Sesiones speaking</div>
     </div>
     <div class="stat-box">
       <div class="num" id="stat-streak">0</div>
-      <div class="lab">Días consecutivos</div>
+      <div class="lab">Días streak</div>
     </div>
     <div class="stat-box">
       <div class="num" id="stat-avg">—</div>
-      <div class="lab">Score promedio speaking</div>
+      <div class="lab">Score promedio</div>
+    </div>
+    <div class="stat-box">
+      <div class="num" id="stat-vocab">0</div>
+      <div class="lab">📚 Vocab pendientes</div>
+    </div>
+    <div class="stat-box">
+      <div class="num" id="stat-vocab-mastered">0</div>
+      <div class="lab">✓ Vocab dominadas</div>
     </div>
   </div>
 </div>
@@ -64,6 +115,7 @@
     <a href="test.html" class="btn">📝 Hacer test CEFR</a>
     <a href="speaking.html" class="btn btn-success">🎤 Practicar speaking</a>
     <a href="writing.html" class="btn btn-secondary">✍️ Practicar writing</a>
+    <a href="vocab.html" class="btn btn-secondary">📚 Repasar vocab</a>
   </div>
 </div>
 
@@ -96,6 +148,7 @@
 
 <script src="js/tracker.js"></script>
 <script src="js/resources.js"></script>
+<script src="js/goal.js"></script>
 <script>
 async function initDashboard() {
   const data = Tracker.load();
@@ -104,6 +157,7 @@ async function initDashboard() {
   const sessions = Tracker.totalSpeakingSessions();
   const avgScore = Tracker.avgSpeakingScore();
   const msg = Tracker.honestMessage();
+  const vocabStats = Tracker.vocabStats();
 
   // Honest message card
   const card = document.getElementById('honest-msg');
@@ -119,10 +173,71 @@ async function initDashboard() {
   document.getElementById('stat-sessions').textContent = sessions;
   document.getElementById('stat-streak').textContent = streak;
   document.getElementById('stat-avg').textContent = avgScore !== null ? `${avgScore}%` : '—';
+  document.getElementById('stat-vocab').textContent = vocabStats.due;
+  document.getElementById('stat-vocab-mastered').textContent = vocabStats.mastered;
 
   // Nav streak
   if (streak > 0) {
     document.getElementById('nav-streak').textContent = `🔥 ${streak} día${streak > 1 ? 's' : ''}`;
+  }
+
+  // Goal + Today's plan + Pomodoros
+  const goal = Tracker.getGoal();
+  if (goal && level) {
+    document.getElementById('goal-card').classList.remove('hidden');
+    document.getElementById('pomo-section').classList.remove('hidden');
+
+    const plan = computePlan(level, goal.targetLevel, goal.targetDate);
+    const daysLeft = Math.max(0, Math.ceil((new Date(goal.targetDate) - new Date()) / (1000*60*60*24)));
+    const pomoTarget = Math.max(1, Math.round(plan.session.totalMinutes / 25));
+
+    document.getElementById('goal-content').innerHTML = `
+      <div style="background: var(--bg-2); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <p style="margin-bottom: 8px;">
+          <strong style="font-size: 1.1rem;">${level}</strong>
+          <span style="color: var(--muted)">→</span>
+          <strong style="color: var(--accent); font-size: 1.1rem;">${goal.targetLevel}</strong>
+        </p>
+        <p style="color: var(--muted); font-size: 0.9rem;">
+          📅 <strong>${daysLeft}</strong> días (${plan.weeks} semanas) · ⏱ Requiere <strong>${plan.hoursPerWeek}h/semana</strong>
+        </p>
+        ${goal.motivation ? `<p style="color: var(--muted); font-size: 0.85rem; margin-top: 8px; font-style: italic;">💭 "${goal.motivation}"</p>` : ''}
+      </div>
+
+      <h3 style="color: var(--accent); margin-bottom: 12px;">📅 Hoy: ${plan.session.totalMinutes} minutos divididos así</h3>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
+        <a href="speaking.html" class="stat-box" style="text-decoration: none; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3);">
+          <div class="num" style="color: var(--primary);">🎤 ${plan.session.speakingMinutes}'</div>
+          <div class="lab">Speaking</div>
+        </a>
+        <a href="writing.html" class="stat-box" style="text-decoration: none; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3);">
+          <div class="num" style="color: var(--warning);">✍️ ${plan.session.writingMinutes}'</div>
+          <div class="lab">Writing</div>
+        </a>
+        <a href="vocab.html" class="stat-box" style="text-decoration: none; background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3);">
+          <div class="num" style="color: var(--accent);">📚 ${plan.recommendedVocabPerDay}</div>
+          <div class="lab">Vocab cards (sostenible)</div>
+        </a>
+      </div>
+    `;
+
+    // Pomodoro section
+    const pomoToday = Tracker.pomodorosToday();
+    const pct = Math.min(100, Math.round((pomoToday / pomoTarget) * 100));
+    document.getElementById('pomo-today').textContent = pomoToday;
+    document.getElementById('pomo-target').textContent = pomoTarget;
+    document.getElementById('pomo-week').textContent = Tracker.pomodorosThisWeek();
+    document.getElementById('pomo-total').textContent = Tracker.totalPomodoros();
+    document.getElementById('pomo-progress').innerHTML = `
+      <div style="margin-bottom: 6px; font-size: 0.9rem;">
+        Hoy: <strong>${pomoToday}/${pomoTarget}</strong> pomodoros ${pomoToday >= pomoTarget ? '✅' : ''}
+      </div>
+      <div class="progress" style="margin: 0;">
+        <div class="progress-fill" style="width: ${pct}%; background: linear-gradient(90deg, #f59e0b, #fb923c);"></div>
+      </div>
+    `;
+  } else if (level) {
+    document.getElementById('no-goal-card').classList.remove('hidden');
   }
 
   // CTA logic
@@ -167,6 +282,133 @@ async function initDashboard() {
       document.getElementById('resources-content').innerHTML = '<p style="color:var(--danger)">No se pudieron cargar los recursos (¿estás abriendo el archivo directo? Necesitas un servidor local: prueba con <code>python3 -m http.server</code>)</p>';
     }
   }
+
+  // Per-skill metrics
+  renderSkillMetrics(data, level);
+
+  // History
+  renderHistory(data);
+}
+
+function trendArrow(recentAvg, previousAvg) {
+  if (recentAvg == null || previousAvg == null) return '<span style="color: var(--muted)">—</span>';
+  const diff = recentAvg - previousAvg;
+  if (Math.abs(diff) < 3) return '<span style="color: var(--muted)">→ estable</span>';
+  if (diff > 0) return `<span style="color: var(--success)">⬆️ +${Math.round(diff)}%</span>`;
+  return `<span style="color: var(--danger)">⬇️ ${Math.round(diff)}%</span>`;
+}
+
+function avgScores(arr, slice) {
+  const subset = slice ? arr.slice(slice[0], slice[1]) : arr;
+  if (!subset.length) return null;
+  return subset.reduce((a, s) => a + (s.score || 0), 0) / subset.length;
+}
+
+function renderSkillMetrics(data, level) {
+  const speaking = data.speakingHistory || [];
+  const writing = data.writingHistory || [];
+  const last = data.testHistory.length ? data.testHistory[data.testHistory.length - 1] : null;
+  const vocabStats = Tracker.vocabStats();
+  const vocabToday = Tracker.vocabReviewedToday();
+
+  const speakAvgRecent = avgScores(speaking.slice(-5));
+  const speakAvgPrev = speaking.length >= 6 ? avgScores(speaking.slice(-10, -5)) : null;
+  const writeAvgRecent = avgScores(writing.slice(-5));
+  const writeAvgPrev = writing.length >= 6 ? avgScores(writing.slice(-10, -5)) : null;
+
+  const readingPct = last?.bySkill?.reading?.total ? Math.round(last.bySkill.reading.correct / last.bySkill.reading.total * 100) : null;
+  const listeningPct = last?.bySkill?.listening?.total ? Math.round(last.bySkill.listening.correct / last.bySkill.listening.total * 100) : null;
+
+  const speakingToday = Tracker.speakingSessionsToday();
+  const writingToday = Tracker.writingSessionsToday();
+
+  document.getElementById('skill-metrics').innerHTML = `
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;">
+
+      <div style="background: rgba(99,102,241,0.10); border: 1px solid rgba(99,102,241,0.3); border-radius: 8px; padding: 14px;">
+        <h3 style="color: var(--primary); font-size: 1rem; margin-bottom: 8px;">🎤 Speaking</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9rem;">
+          <div>Hoy: <strong>${speakingToday}</strong></div>
+          <div>Total: <strong>${speaking.length}</strong></div>
+          <div>Avg (últ 5): <strong>${speakAvgRecent != null ? Math.round(speakAvgRecent) + '%' : '—'}</strong></div>
+          <div>${trendArrow(speakAvgRecent, speakAvgPrev)}</div>
+        </div>
+      </div>
+
+      <div style="background: rgba(245,158,11,0.10); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 14px;">
+        <h3 style="color: var(--warning); font-size: 1rem; margin-bottom: 8px;">✍️ Writing</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9rem;">
+          <div>Hoy: <strong>${writingToday}</strong></div>
+          <div>Total: <strong>${writing.length}</strong></div>
+          <div>Avg (últ 5): <strong>${writeAvgRecent != null ? Math.round(writeAvgRecent) + '%' : '—'}</strong></div>
+          <div>${trendArrow(writeAvgRecent, writeAvgPrev)}</div>
+        </div>
+      </div>
+
+      <div style="background: rgba(6,182,212,0.10); border: 1px solid rgba(6,182,212,0.3); border-radius: 8px; padding: 14px;">
+        <h3 style="color: var(--accent); font-size: 1rem; margin-bottom: 8px;">📚 Vocabulary</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9rem;">
+          <div>Hoy: <strong>${vocabToday}</strong></div>
+          <div>Pool: <strong>${vocabStats.total}</strong></div>
+          <div>Dominadas: <strong style="color: var(--success);">${vocabStats.mastered}</strong></div>
+          <div>Pendientes: <strong style="color: var(--warning);">${vocabStats.due}</strong></div>
+        </div>
+      </div>
+
+      <div style="background: rgba(16,185,129,0.10); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 14px;">
+        <h3 style="color: var(--success); font-size: 1rem; margin-bottom: 8px;">📖 Reading / 🎧 Listening</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9rem;">
+          <div>Reading: <strong>${readingPct != null ? readingPct + '%' : '—'}</strong></div>
+          <div>Listening: <strong>${listeningPct != null ? listeningPct + '%' : '—'}</strong></div>
+        </div>
+        <p style="color: var(--muted); font-size: 0.75rem; margin-top: 8px;">Del último test. Re-hazlo cada mes para actualizar.</p>
+      </div>
+
+    </div>
+  `;
+}
+
+function renderHistory(data) {
+  const history = data.testHistory || [];
+  if (history.length < 1) return;
+  document.getElementById('history-card').classList.remove('hidden');
+  const rows = history.slice().reverse().map(h => {
+    const date = new Date(h.date).toLocaleDateString('es', { day: '2-digit', month: 'short', year: '2-digit' });
+    const pct = Math.round((h.correct / h.total) * 100);
+    return `
+      <tr style="border-bottom: 1px solid var(--border);">
+        <td style="padding: 8px; color: var(--muted);">${date}</td>
+        <td style="padding: 8px;"><strong style="color: var(--accent);">${h.cefr}</strong></td>
+        <td style="padding: 8px;">${h.correct}/${h.total} (${pct}%)</td>
+        <td style="padding: 8px; font-size: 0.85rem; color: var(--muted);">
+          ${h.bySkill ? Object.entries(h.bySkill).map(([s, v]) => v.total ? `${s.slice(0,3)}:${Math.round(v.correct/v.total*100)}%` : '').filter(Boolean).join(' · ') : ''}
+        </td>
+      </tr>
+    `;
+  }).join('');
+  document.getElementById('history-content').innerHTML = `
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border); text-align: left; color: var(--muted); font-size: 0.8rem;">
+            <th style="padding: 8px;">FECHA</th>
+            <th style="padding: 8px;">NIVEL</th>
+            <th style="padding: 8px;">SCORE</th>
+            <th style="padding: 8px;">POR HABILIDAD</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    ${history.length > 1 ? `
+      <p style="color: var(--muted); font-size: 0.85rem; margin-top: 12px;">
+        ${history[history.length-1].cefr === history[0].cefr
+          ? `📊 Tu nivel se ha mantenido en <strong>${history[0].cefr}</strong>. ${history.length > 2 ? 'Sigue trabajando o ajusta la estrategia.' : 'Necesitas más datos.'}`
+          : `📈 Has progresado de <strong>${history[0].cefr}</strong> a <strong>${history[history.length-1].cefr}</strong>. Excelente.`
+        }
+      </p>
+    ` : ''}
+  `;
 }
 
 function resetAll() {

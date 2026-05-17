@@ -12,9 +12,11 @@
   <a class="brand" href="index.html">🎯 honest-english</a>
   <div class="links">
     <a href="index.html">Dashboard</a>
+    <a href="goal.html">Goal</a>
     <a href="test.html">Test CEFR</a>
     <a href="speaking.html" class="active">Speaking</a>
     <a href="writing.html">Writing</a>
+    <a href="vocab.html">Vocab</a>
     <a href="settings.html">Settings</a>
   </div>
   <div class="streak" id="nav-streak"></div>
@@ -34,12 +36,26 @@
 </div>
 
 <div class="card">
+  <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+    <button id="btn-mode-practice" class="btn btn-secondary btn-small active-mode" onclick="setSpeakMode('practice')">🎤 Modo práctica</button>
+    <button id="btn-mode-list" class="btn btn-secondary btn-small" onclick="setSpeakMode('list')">📋 Ver lista de frases</button>
+    <button id="btn-mode-vocab" class="btn btn-secondary btn-small" onclick="setSpeakMode('vocab')">🔁 Repasar palabras (recientes)</button>
+  </div>
+
+  <div id="speak-list-area" class="hidden"></div>
+
+  <div id="speak-practice-area">
+  <div id="daily-goal-display" style="background: var(--bg-2); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px;"></div>
+
   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom: 16px;">
     <div>
       <label for="level-select" style="color:var(--muted); font-size: 0.85rem;">Nivel:</label>
       <select id="level-select" onchange="loadRandomPrompt()" style="background:var(--bg-2); color:var(--text); border:1px solid var(--border); padding:6px 10px; border-radius:6px; margin-left:6px;"></select>
     </div>
-    <button class="btn btn-secondary btn-small" onclick="loadRandomPrompt()">🎲 Otra frase aleatoria</button>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-secondary btn-small" onclick="loadRandomPrompt()">🎲 Aleatoria</button>
+      <button class="btn btn-success btn-small" onclick="loadRandomPrompt()" title="Saltar a la siguiente">➡️ Siguiente</button>
+    </div>
   </div>
 
   <label id="whisper-toggle-label" class="hidden" style="display:flex; align-items:center; gap:8px; margin-bottom:12px; color:var(--accent); font-size:0.9rem;">
@@ -63,8 +79,12 @@
   <p style="text-align:center; color: var(--muted); font-size: 0.85rem;">
     Presiona <strong>Grabar</strong>, di la frase en inglés, presiona <strong>Detener</strong>. Comparamos lo que dijiste con lo esperado.
   </p>
+  <p style="text-align:center; color: var(--accent); font-size: 0.8rem; margin-top: 6px;">
+    💡 Toca cualquier palabra del enunciado arriba para escuchar su pronunciación individual.
+  </p>
 
   <div id="result-area" class="speak-result hidden"></div>
+  </div><!-- /speak-practice-area -->
 </div>
 
 <div class="card">
@@ -92,6 +112,7 @@
 <script src="js/tracker.js"></script>
 <script src="js/api.js"></script>
 <script src="js/speaking.js"></script>
+<script src="js/pomodoro.js"></script>
 <script>
 // Render speaking-specific stats
 window.addEventListener('load', () => {

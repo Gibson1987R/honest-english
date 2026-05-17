@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>honest-english · Goal & Plan</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="lang-es">
+
+<nav>
+  <a class="brand" href="index.html">🎯 honest-english</a>
+  <div class="links">
+    <a href="index.html">Dashboard</a>
+    <a href="goal.html" class="active">Goal</a>
+    <a href="test.html">Test CEFR</a>
+    <a href="speaking.html">Speaking</a>
+    <a href="writing.html">Writing</a>
+    <a href="vocab.html">Vocab</a>
+    <a href="settings.html">Settings</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<header>
+  <h1>
+    <span class="i18n-es">🎯 Tu meta real</span>
+    <span class="i18n-en">🎯 Your real goal</span>
+  </h1>
+  <p class="subtitle">
+    <span class="i18n-es">Sin metas concretas, "aprender inglés" es infinito. Aquí la matemática honesta.</span>
+    <span class="i18n-en">Without concrete goals, "learn English" is infinite. Here's the honest math.</span>
+  </p>
+</header>
+
+<div class="card">
+  <h2>
+    <span class="i18n-es">📍 ¿De dónde a dónde?</span>
+    <span class="i18n-en">📍 From where to where?</span>
+  </h2>
+  <p style="color: var(--muted); margin-bottom: 16px;">
+    <span class="i18n-es">Tu nivel actual (detectado por test):</span>
+    <span class="i18n-en">Your current level (detected by test):</span>
+    <strong id="current-level" style="color: var(--accent);">—</strong>
+    <span style="font-size: 0.85rem;">(<a href="test.html" style="color: var(--muted);"><span class="i18n-es">re-hacer test</span><span class="i18n-en">re-take test</span></a>)</span>
+  </p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+    <div>
+      <label style="color: var(--muted); font-size: 0.85rem;">
+        <span class="i18n-es">🎯 Nivel objetivo</span>
+        <span class="i18n-en">🎯 Target level</span>
+      </label>
+      <select id="target-level-select" style="width:100%; padding:10px; background:var(--bg-2); color:var(--text); border:1px solid var(--border); border-radius:6px; margin-top: 4px;">
+        <option value="A1">A1</option>
+        <option value="A2">A2</option>
+        <option value="B1">B1 (mínimo útil para trabajo / minimum useful for work)</option>
+        <option value="B2">B2 (umbral profesional / professional threshold)</option>
+        <option value="C1">C1 (avanzado / advanced)</option>
+        <option value="C2">C2 (maestría / mastery)</option>
+      </select>
+    </div>
+    <div>
+      <label style="color: var(--muted); font-size: 0.85rem;">
+        <span class="i18n-es">📅 Fecha objetivo</span>
+        <span class="i18n-en">📅 Target date</span>
+      </label>
+      <input type="date" id="target-date" style="width:100%; padding:10px; background:var(--bg-2); color:var(--text); border:1px solid var(--border); border-radius:6px; margin-top: 4px;">
+    </div>
+  </div>
+
+  <div style="margin-bottom: 16px;">
+    <label style="color: var(--muted); font-size: 0.85rem;">
+      <span class="i18n-es">💭 ¿Por qué quieres aprender inglés? (Tu motivación honesta)</span>
+      <span class="i18n-en">💭 Why do you want to learn English? (Your honest motivation)</span>
+    </label>
+    <textarea id="motivation" rows="3" placeholder="Ej: Para conseguir trabajo internacional, leer documentación técnica, viajar..." style="width:100%; padding:10px; background:var(--bg-2); color:var(--text); border:1px solid var(--border); border-radius:6px; margin-top: 4px; font-family: inherit;"></textarea>
+    <p style="color: var(--muted); font-size: 0.8rem; margin-top: 4px;">
+      <span class="i18n-es">⚠️ Escribe en español si todavía no manejas bien el inglés. La honestidad sobre tu motivación es lo que te va a sostener cuando aparezcan las ganas de abandonar.</span>
+      <span class="i18n-en">⚠️ Honesty about your motivation is what'll sustain you when you feel like quitting.</span>
+    </p>
+  </div>
+
+  <div style="display: flex; gap: 8px; align-items: center;">
+    <button class="btn" onclick="saveGoal()">
+      <span class="i18n-es">💾 Guardar meta</span>
+      <span class="i18n-en">💾 Save goal</span>
+    </button>
+    <button class="btn btn-secondary btn-small" onclick="clearGoal()">
+      <span class="i18n-es">🗑 Borrar meta</span>
+      <span class="i18n-en">🗑 Clear goal</span>
+    </button>
+    <span id="save-status" style="color: var(--success);"></span>
+  </div>
+</div>
+
+<div class="card">
+  <h2>
+    <span class="i18n-es">📊 Tu plan calculado</span>
+    <span class="i18n-en">📊 Your computed plan</span>
+  </h2>
+  <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">
+    <span class="i18n-es">Basado en benchmarks reales del Marco Común Europeo (Cambridge). Los números cambian al ajustar tu objetivo arriba.</span>
+    <span class="i18n-en">Based on real Cambridge CEFR benchmarks. Numbers update as you adjust the goal above.</span>
+  </p>
+  <div id="plan-output"></div>
+</div>
+
+<div class="card" style="border-color: var(--accent);">
+  <h2>
+    <span class="i18n-es">💡 Cómo se usan estos números</span>
+    <span class="i18n-en">💡 How to use these numbers</span>
+  </h2>
+  <ul style="margin-left: 20px; color: var(--muted); font-size: 0.9rem; line-height: 1.8;">
+    <li>
+      <strong><span class="i18n-es">Horas totales:</span><span class="i18n-en">Total hours:</span></strong>
+      <span class="i18n-es">estimación basada en investigación del Cambridge English; varía por persona.</span>
+      <span class="i18n-en">Cambridge English research estimate; varies per person.</span>
+    </li>
+    <li>
+      <strong><span class="i18n-es">Horas/semana:</span><span class="i18n-en">Hours/week:</span></strong>
+      <span class="i18n-es">divide horas totales por semanas hasta tu fecha.</span>
+      <span class="i18n-en">total hours divided by weeks remaining.</span>
+    </li>
+    <li>
+      <strong><span class="i18n-es">Palabras a aprender:</span><span class="i18n-en">Words to learn:</span></strong>
+      <span class="i18n-es">brecha entre vocab de tu nivel actual y el objetivo (A2≈2000, B1≈3500, B2≈6000).</span>
+      <span class="i18n-en">gap between current and target level vocab (A2≈2000, B1≈3500, B2≈6000).</span>
+    </li>
+    <li>
+      <strong><span class="i18n-es">Distribución por sesión:</span><span class="i18n-en">Session split:</span></strong>
+      <span class="i18n-es">40% speaking, 25% writing, 25% vocab, 10% listening — pesa speaking porque es donde más se atrofia.</span>
+      <span class="i18n-en">40% speaking, 25% writing, 25% vocab, 10% listening — speaking is weighted because it's the muscle that atrophies fastest.</span>
+    </li>
+  </ul>
+</div>
+
+<footer>
+  honest-english · metas concretas, no aspiracionales
+</footer>
+
+</div>
+
+<script src="js/tracker.js"></script>
+<script src="js/goal.js"></script>
+</body>
+</html>

@@ -77,6 +77,31 @@ h1 { font-size: 2rem; margin-bottom: 8px; background: linear-gradient(90deg, #63
 .btn-small { padding: 8px 14px; font-size: 0.85rem; }
 .btn-danger { background: var(--danger); }
 .btn-success { background: var(--success); }
+.active-mode { background: var(--primary); border-color: var(--primary); }
+
+/* Tappable words in speaking prompts */
+.prompt-word {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 1px 3px;
+  transition: background 0.15s;
+}
+.prompt-word:hover {
+  background: rgba(99, 102, 241, 0.25);
+}
+.prompt-word:active {
+  background: rgba(99, 102, 241, 0.5);
+}
+
+/* i18n based on user level — applied by adding lang-es / lang-bi / lang-en to body */
+body.lang-es .i18n-en { display: none; }
+body.lang-en .i18n-es { display: none; }
+body.lang-bi .i18n-es { display: block; color: var(--muted); font-size: 0.82em; margin-top: 2px; font-style: italic; }
+body.lang-bi label .i18n-es,
+body.lang-bi h1 .i18n-es,
+body.lang-bi h2 .i18n-es,
+body.lang-bi h3 .i18n-es,
+body.lang-bi p .i18n-es { display: inline; margin-left: 4px; }
 
 .progress {
   background: var(--bg-2);
@@ -360,4 +385,20 @@ footer { text-align:center; padding: 32px 0; color: var(--muted); font-size: 0.8
   .card { padding: 16px; }
   .speak-prompt { font-size: 1.2rem; padding: 20px 12px; }
   nav { flex-direction: column; align-items: stretch; }
+  nav .links { justify-content: center; gap: 10px; font-size: 0.9rem; }
+
+  /* Pomodoro widget smaller on phones */
+  .pomo-widget {
+    bottom: 12px !important;
+    right: 12px !important;
+    padding: 10px !important;
+    min-width: 140px !important;
+  }
+  .pomo-widget .pomo-time { font-size: 1.4rem !important; }
+
+  /* Stat boxes wider on small screens */
+  .summary-grid { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Tables scroll horizontally on phone */
+  table { font-size: 0.85rem; }
 }
