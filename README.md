@@ -8,7 +8,7 @@ learning English the hard way — and refusing to lie to himself about progress.
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![No build step](https://img.shields.io/badge/Build-Not_required-brightgreen)](#)
 
-**Live demo:** _(deploy pending — will be at `https://<your-github-username>.github.io/honest-english/`)_
+**Live demo:** _(deploy pending — will be at `https://Gibson1987R.github.io/honest-english/`)_
 
 ---
 
@@ -135,7 +135,7 @@ honest-english/
 directly with `file://` — it won't work. Use a tiny static server:
 
 ```bash
-git clone git@github.com:<your-username>/honest-english.git
+git clone git@github.com:Gibson1987R/honest-english.git
 cd honest-english
 python3 -m http.server 8080
 # open http://localhost:8080
@@ -207,5 +207,5 @@ learning.
 
 MIT — see [LICENSE](LICENSE).
 
-Built by [Gibson Rosales](https://github.com/<your-username>), learning English
+Built by [Gibson Rosales](https://github.com/Gibson1987R), learning English
 in public, refusing to lie about progress.
