@@ -14,6 +14,8 @@
     <a href="index.html">Dashboard</a>
     <a href="test.html" class="active">Test CEFR</a>
     <a href="speaking.html">Speaking</a>
+    <a href="writing.html">Writing</a>
+    <a href="settings.html">Settings</a>
   </div>
 </nav>
 
@@ -34,7 +36,11 @@
     <li><strong style="color:var(--text)">Autoevaluación</strong> — speaking y writing (honesto, no se puede medir automático)</li>
   </ul>
   <p style="margin-bottom: 12px; color: var(--muted); font-size: 0.9rem;">⏱ 15-25 minutos. Sin tiempo límite. Sé honesto: si no sabes, marca "no sé" (es info real).</p>
-  <button class="btn" onclick="startTest()">Empezar test</button>
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <button class="btn" onclick="startTest()">📝 Test estándar (curado)</button>
+    <button class="btn btn-secondary" onclick="startDynamicTest()" id="dynamic-btn">✨ Test dinámico (generado por Claude)</button>
+  </div>
+  <p style="margin-top:12px; color: var(--muted); font-size: 0.85rem;">El test dinámico genera preguntas frescas a tu nivel exacto cada vez. Requiere tu API key de Anthropic en <a href="settings.html" style="color: var(--accent);">Settings</a>.</p>
 </div>
 
 <div id="test" class="card hidden">
@@ -88,8 +94,10 @@
 </div>
 
 <script src="js/tracker.js"></script>
+<script src="js/api.js"></script>
 <script src="js/results.js"></script>
 <script src="js/resources.js"></script>
+<script src="js/dynamic-questions.js"></script>
 <script src="js/test.js"></script>
 </body>
 </html>

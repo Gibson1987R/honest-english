@@ -241,6 +241,35 @@ function restart() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ===== Phase 3: Dynamic test (Claude) =====
+async function startDynamicTest() {
+  const btn = document.getElementById('dynamic-btn');
+  const detected = Tracker.currentLevel() || 'A2';
+
+  if (!ApiKeys.hasAnthropic()) {
+    alert('Necesitas tu API key de Anthropic. Ve a Settings → Anthropic.');
+    location.href = 'settings.html';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = `⏳ Generando preguntas para nivel ${detected}…`;
+
+  try {
+    const generated = await generateQuestions(detected, 10);
+    QUESTIONS = generated;
+    answers = new Array(QUESTIONS.length).fill(null);
+    document.getElementById('intro').classList.add('hidden');
+    document.getElementById('test').classList.remove('hidden');
+    currentIndex = 0;
+    renderQuestion();
+  } catch (e) {
+    alert(`Error generando preguntas: ${e.message}`);
+    btn.disabled = false;
+    btn.textContent = '✨ Test dinámico (generado por Claude)';
+  }
+}
+
 // Init
 loadQuestions().then(() => {
   if (typeof speechSynthesis !== 'undefined') {
