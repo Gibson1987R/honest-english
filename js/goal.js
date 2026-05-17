@@ -40,25 +40,45 @@ function weeksBetween(date1, date2) {
   return ms / (1000 * 60 * 60 * 24 * 7);
 }
 
+// Research-backed vocab acquisition limits (Paul Nation, Cambridge English Profile)
+// Sustainable sweet spot for working adults: 8-12 words/day
+const VOCAB_PER_DAY = {
+  SUSTAINABLE_MIN: 8,
+  SUSTAINABLE_MAX: 12,
+  AGGRESSIVE_MAX: 20,    // Hard but possible with strong SRS
+  UNREALISTIC_THRESHOLD: 25  // Beyond this, retention collapses
+};
+
 function computePlan(currentLevel, targetLevel, targetDate) {
   const totalHours = totalHoursNeeded(currentLevel, targetLevel);
   const totalVocab = vocabGap(currentLevel, targetLevel);
   const weeks = weeksBetween(new Date(), targetDate);
   const days = weeks * 7;
   const hoursPerWeek = weeks > 0 ? totalHours / weeks : Infinity;
-  const vocabPerDay = days > 0 ? Math.ceil(totalVocab / days) : 0;
+  const rawVocabPerDay = days > 0 ? totalVocab / days : 0;
+
+  // Cap recommended vocab/day to research-backed sustainable rate
+  // If the math says you need 30/day to hit your goal, we show that — but
+  // we ALSO show the realistic ceiling and tell you the goal needs extending.
+  const vocabPerDay = Math.ceil(rawVocabPerDay);
+  const recommendedVocabPerDay = Math.min(vocabPerDay, VOCAB_PER_DAY.SUSTAINABLE_MAX);
+  const monthsNeededAtSustainable = totalVocab > 0
+    ? Math.ceil(totalVocab / VOCAB_PER_DAY.SUSTAINABLE_MAX / 30)
+    : 0;
 
   let feasibility = 'ok';
   let feasibilityMsg = `Plan realista: ${hoursPerWeek.toFixed(1)}h/semana de práctica activa.`;
-  if (hoursPerWeek > 25) {
+  if (hoursPerWeek > 25 || vocabPerDay > VOCAB_PER_DAY.UNREALISTIC_THRESHOLD) {
     feasibility = 'unrealistic';
-    feasibilityMsg = `⚠️ ${hoursPerWeek.toFixed(1)}h/semana es prácticamente imposible sin dejar tu trabajo. Extiende el plazo o baja la meta.`;
-  } else if (hoursPerWeek > 15) {
+    feasibilityMsg = `⚠️ Inviable: ${hoursPerWeek.toFixed(1)}h/semana y ${vocabPerDay} palabras/día exceden los límites humanos sostenibles. La investigación (Paul Nation) muestra que pasar de ${VOCAB_PER_DAY.AGGRESSIVE_MAX} palabras/día sin un sistema robusto = olvido masivo. Necesitas mínimo ${monthsNeededAtSustainable} meses para esta meta a ritmo sostenible.`;
+  } else if (hoursPerWeek > 15 || vocabPerDay > VOCAB_PER_DAY.SUSTAINABLE_MAX) {
     feasibility = 'aggressive';
-    feasibilityMsg = `🔥 Plan ambicioso: ${hoursPerWeek.toFixed(1)}h/semana. Posible pero demanda disciplina diaria.`;
-  } else if (hoursPerWeek < 3) {
+    feasibilityMsg = `🔥 Ambicioso: ${hoursPerWeek.toFixed(1)}h/semana, ${vocabPerDay} palabras/día (más del sweet spot científico de 8-12). Posible pero demanda disciplina diaria.`;
+  } else if (hoursPerWeek < 3 || vocabPerDay < VOCAB_PER_DAY.SUSTAINABLE_MIN) {
     feasibility = 'slow';
-    feasibilityMsg = `🐢 Solo ${hoursPerWeek.toFixed(1)}h/semana. Realista pero lento. Considera acortar el plazo.`;
+    feasibilityMsg = `🐢 Plazo muy holgado: ${hoursPerWeek.toFixed(1)}h/semana, ${vocabPerDay} palabras/día. Realista pero lento — considera acortar el plazo para no abandonar por aburrimiento.`;
+  } else {
+    feasibilityMsg = `✅ Sweet spot: ${hoursPerWeek.toFixed(1)}h/semana y ${vocabPerDay} palabras/día están dentro del rango sostenible respaldado por investigación (Paul Nation, Cambridge English).`;
   }
 
   // Suggested daily session breakdown (45 min default)
@@ -78,6 +98,8 @@ function computePlan(currentLevel, targetLevel, targetDate) {
     days: Math.round(days),
     hoursPerWeek: Math.round(hoursPerWeek * 10) / 10,
     vocabPerDay,
+    recommendedVocabPerDay,
+    monthsNeededAtSustainable,
     feasibility,
     feasibilityMsg,
     session
@@ -156,10 +178,23 @@ function recomputePlan() {
       <div class="stat-box"><div class="num">${plan.totalHours}</div><div class="lab">Horas totales necesarias</div></div>
       <div class="stat-box"><div class="num">${plan.weeks}</div><div class="lab">Semanas disponibles</div></div>
       <div class="stat-box"><div class="num">${plan.hoursPerWeek}</div><div class="lab">Horas/semana requeridas</div></div>
-      <div class="stat-box"><div class="num">${plan.totalVocab}</div><div class="lab">Palabras a aprender</div></div>
-      <div class="stat-box"><div class="num">${plan.vocabPerDay}</div><div class="lab">Palabras/día</div></div>
+      <div class="stat-box"><div class="num">${plan.totalVocab}</div><div class="lab">Palabras totales</div></div>
+      <div class="stat-box">
+        <div class="num" style="color: ${plan.vocabPerDay > 12 ? 'var(--warning)' : 'var(--success)'};">${plan.vocabPerDay}</div>
+        <div class="lab">Palabras/día requeridas</div>
+      </div>
+      <div class="stat-box" style="background: rgba(16, 185, 129, 0.15);">
+        <div class="num" style="color: var(--success);">${plan.recommendedVocabPerDay}</div>
+        <div class="lab">📖 Recomendado (Nation, 8-12)</div>
+      </div>
       <div class="stat-box"><div class="num">${plan.session.totalMinutes}</div><div class="lab">Min/día sugeridos</div></div>
     </div>
+
+    ${plan.vocabPerDay > 12 ? `
+      <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); border-radius: 8px; padding: 12px; margin-top: 12px; font-size: 0.9rem;">
+        ⚠️ <strong>Realidad científica:</strong> tu plan pide <strong>${plan.vocabPerDay}/día</strong> pero la investigación muestra que más de 12-15 sin un sistema espaciado robusto = olvido masivo. A ritmo sostenible (12/día) necesitarías ${plan.monthsNeededAtSustainable} meses. Si quieres ir a este ritmo, mantén el SRS de la app activo y revisa diariamente.
+      </div>
+    ` : ''}
 
     <h3 style="margin-top: 20px;">📅 Cómo se distribuye una sesión diaria</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;">

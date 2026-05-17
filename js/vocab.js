@@ -65,12 +65,13 @@ function setMode(mode) {
 // ===== Session mode: walk first, rate at the end =====
 function startSession() {
   const due = Tracker.dueVocabCards();
-  // Determine session size: use goal-based vocab/day if set, else 10
+  // Session size = research-backed recommendation (8-12), capped at what's actually due
   const goal = Tracker.getGoal();
-  let target = 10;
+  let target = 10; // default sweet spot from Paul Nation research
   if (goal && typeof computePlan === 'function') {
     const plan = computePlan(Tracker.currentLevel() || 'A2', goal.targetLevel, goal.targetDate);
-    if (plan.vocabPerDay > 0) target = Math.min(due.length || plan.vocabPerDay, plan.vocabPerDay);
+    // Use the SUSTAINABLE recommendation, not the raw division
+    if (plan.recommendedVocabPerDay > 0) target = plan.recommendedVocabPerDay;
   }
   sessionTarget = Math.max(1, target);
   sessionQueue = due.slice(0, sessionTarget).map(c => ({
