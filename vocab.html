@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>honest-english · Vocab Cards</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="index.html">🎯 honest-english</a>
+  <div class="links">
+    <a href="index.html">Dashboard</a>
+    <a href="goal.html">Goal</a>
+    <a href="test.html">Test CEFR</a>
+    <a href="speaking.html">Speaking</a>
+    <a href="writing.html">Writing</a>
+    <a href="vocab.html" class="active">Vocab</a>
+    <a href="settings.html">Settings</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<header>
+  <h1>📚 Vocab Cards</h1>
+  <p class="subtitle">Palabras de TUS errores, no listas random. Spaced repetition (SM-2 simplificado).</p>
+</header>
+
+<div class="card">
+  <h2>📊 Tu pool</h2>
+  <div class="summary-grid" id="stats"></div>
+</div>
+
+<div class="card">
+  <div id="card-area" style="min-height: 280px;">
+    <p style="text-align:center; color: var(--muted);">Cargando...</p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>🧠 Cómo funciona</h2>
+  <ul style="margin-left: 20px; color: var(--muted); font-size: 0.9rem; line-height: 1.8;">
+    <li><strong>Fuentes:</strong> palabras que fallaste en el test, correcciones de writing, y como fallback listas curadas por nivel CEFR.</li>
+    <li><strong>SM-2 (simplificado):</strong> tu rating determina cuándo vuelve la card.
+      <ul style="margin-left: 20px; margin-top: 6px;">
+        <li>😖 Hard / 😕 Fail → vuelve mañana (interval = 1 día)</li>
+        <li>🙂 Good → interval crece x ease factor</li>
+        <li>😎 Easy → interval crece más, ease factor sube</li>
+      </ul>
+    </li>
+    <li><strong>Dominada:</strong> después de 5+ repasos con interval ≥ 14 días, la card sale del pool.</li>
+  </ul>
+</div>
+
+<footer>
+  honest-english · vocab que viene de tus errores reales
+</footer>
+
+</div>
+
+<script src="js/tracker.js"></script>
+<script src="js/goal.js"></script>
+<script src="js/vocab.js"></script>
+<script src="js/pomodoro.js"></script>
+</body>
+</html>

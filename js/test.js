@@ -142,12 +142,28 @@ function speak(text) {
   speechSynthesis.speak(u);
 }
 
+function captureMissedVocab() {
+  // Add missed vocab words to the user's vocab pool for spaced review
+  let added = 0;
+  QUESTIONS.forEach((q, i) => {
+    if (q.skill !== 'vocab' || q.type === 'reading-text' || q.type === 'self') return;
+    if (answers[i] === q.correct) return; // they got it right
+    const correctWord = q.options[q.correct].toLowerCase().trim();
+    // Skip multi-word options
+    if (correctWord.split(/\s+/).length > 1) return;
+    if (Tracker.addToVocabPool(correctWord, 'test', q.q)) added++;
+  });
+  return added;
+}
+
 function showResults() {
   document.getElementById('test').classList.add('hidden');
   document.getElementById('results').classList.remove('hidden');
 
   const r = calculateCEFR(QUESTIONS, answers);
   Tracker.recordTest(r);
+  const vocabAdded = captureMissedVocab();
+  if (vocabAdded > 0) console.log(`Added ${vocabAdded} missed words to vocab pool`);
 
   document.getElementById('cefr-level').textContent = r.cefr;
   document.getElementById('cefr-label').textContent = CEFR_INFO[r.cefr].label;
