@@ -2,6 +2,12 @@
 
 All notable changes to honest-english will be documented in this file.
 
+## [0.4.1] — 2026-06-12
+
+### Fixed
+- Vocab guided sessions now start immediately after adding curated words.
+- Standard CEFR test button now waits until questions are loaded and shows a clear load error if data cannot be fetched.
+
 ## [0.4.0] — 2026-05-17
 
 ### Added — Phase 4: Writing

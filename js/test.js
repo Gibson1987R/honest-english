@@ -3,14 +3,26 @@
 let QUESTIONS = [];
 let currentIndex = 0;
 let answers = [];
+let questionsReady = false;
 
 async function loadQuestions() {
   const res = await fetch('data/questions.json');
+  if (!res.ok) throw new Error(`No se pudieron cargar las preguntas (${res.status})`);
   QUESTIONS = await res.json();
   answers = new Array(QUESTIONS.length).fill(null);
+  questionsReady = true;
+  const standardBtn = document.getElementById('standard-btn');
+  if (standardBtn) {
+    standardBtn.disabled = false;
+    standardBtn.textContent = '📝 Test estándar (curado)';
+  }
 }
 
 function startTest() {
+  if (!questionsReady || !QUESTIONS.length) {
+    alert('El test todavía está cargando. Intenta de nuevo en un momento.');
+    return;
+  }
   document.getElementById('intro').classList.add('hidden');
   document.getElementById('test').classList.remove('hidden');
   currentIndex = 0;
@@ -287,9 +299,25 @@ async function startDynamicTest() {
 }
 
 // Init
-loadQuestions().then(() => {
-  if (typeof speechSynthesis !== 'undefined') {
-    speechSynthesis.onvoiceschanged = () => {};
-    speechSynthesis.getVoices();
-  }
-});
+loadQuestions()
+  .then(() => {
+    if (typeof speechSynthesis !== 'undefined') {
+      speechSynthesis.onvoiceschanged = () => {};
+      speechSynthesis.getVoices();
+    }
+  })
+  .catch((e) => {
+    const standardBtn = document.getElementById('standard-btn');
+    if (standardBtn) {
+      standardBtn.disabled = true;
+      standardBtn.textContent = '❌ No se pudo cargar el test';
+    }
+    const intro = document.getElementById('intro');
+    if (intro) {
+      const p = document.createElement('p');
+      p.style.color = 'var(--danger)';
+      p.style.marginTop = '12px';
+      p.textContent = `${e.message}. Si estás abriendo el archivo directo, usa un servidor local o GitHub Pages.`;
+      intro.appendChild(p);
+    }
+  });

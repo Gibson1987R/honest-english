@@ -408,9 +408,10 @@ function seedAndStart() {
     return;
   }
   alert(`✓ ${added} palabras agregadas a tu pool.`);
-  if (viewMode === 'review') renderCard();
-  else renderList();
   updateStats();
+  if (viewMode === 'session') startSession();
+  else if (viewMode === 'review') renderCard();
+  else renderList();
 }
 
 function updateStats() {

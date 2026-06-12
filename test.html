@@ -39,7 +39,7 @@
   </ul>
   <p style="margin-bottom: 12px; color: var(--muted); font-size: 0.9rem;">⏱ 15-25 minutos. Sin tiempo límite. Sé honesto: si no sabes, marca "no sé" (es info real).</p>
   <div style="display:flex; gap:10px; flex-wrap:wrap;">
-    <button class="btn" onclick="startTest()">📝 Test estándar (curado)</button>
+    <button class="btn" id="standard-btn" onclick="startTest()" disabled>📝 Cargando test...</button>
     <button class="btn btn-secondary" onclick="startDynamicTest()" id="dynamic-btn">✨ Test dinámico (generado por Claude)</button>
   </div>
   <p style="margin-top:12px; color: var(--muted); font-size: 0.85rem;">El test dinámico genera preguntas frescas a tu nivel exacto cada vez. Requiere tu API key de Anthropic en <a href="settings.html" style="color: var(--accent);">Settings</a>.</p>
