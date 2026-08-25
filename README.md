@@ -1,14 +1,25 @@
 # honest-english
 
-A brutally honest English-learning tracker. Built by a Spanish-speaking developer
-learning English the hard way — and refusing to lie to himself about progress.
+> **Language apps reward you for opening them. This one measures whether you can
+> actually speak English — and tells you, out loud, when you can't.**
 
-[![Made with Vanilla JS](https://img.shields.io/badge/Made_with-Vanilla_JS-yellow)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![GitHub Pages](https://img.shields.io/badge/Deployed-GitHub_Pages-blue)](https://pages.github.com/)
+I am a Spanish speaker learning English to get hired. Every app I tried gave me a
+streak and a green checkmark while my speaking stayed exactly where it was. So I
+built the tracker I actually needed: it makes you talk into the microphone, scores
+what came out word by word, and shows the gap between what you *understand* and
+what you can *produce* — the trap every self-taught learner falls into.
+
+### ▶ Try it: **<https://gibson1987r.github.io/honest-english/>**
+
+No sign-up, no install, no backend. Take the CEFR test and speak into your mic —
+it works in the browser as-is. The AI features are optional and use *your* key.
+
+[![Screenshot of the honest-english dashboard](docs/captura.png)](https://gibson1987r.github.io/honest-english/)
+
+[![Vanilla JS](https://img.shields.io/badge/Made_with-Vanilla_JS-yellow)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![GitHub Pages](https://img.shields.io/badge/Live-GitHub_Pages-blue)](https://gibson1987r.github.io/honest-english/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![No build step](https://img.shields.io/badge/Build-Not_required-brightgreen)](#)
-
-**Live demo:** _(deploy pending — will be at `https://Gibson1987R.github.io/honest-english/`)_
+[![No build step](https://img.shields.io/badge/Build-Not_required-brightgreen)](#getting-started)
 
 ---
 
@@ -28,7 +39,6 @@ This is also a portfolio project. The codebase is intentionally vanilla — no
 React, no build step, no dependencies. Every line is yours to read.
 
 ---
-
 ## Features
 
 ### 📝 CEFR Test (Phase 1)
@@ -84,6 +94,40 @@ doesn't celebrate intent; it celebrates evidence.
 | AI features | Anthropic Claude API (BYOK) | Quality > all, with optional Whisper for audio |
 | Hosting | GitHub Pages | Free, static, perfect fit |
 | CI/CD | GitHub Actions (`pages.yml`) | Auto-deploy on push to main |
+
+---
+
+## The decision worth telling: BYOK instead of a backend
+
+The obvious way to add AI features is a small server that holds my API key and
+proxies the calls. I decided against it, and that decision shaped the whole
+project.
+
+**The problem with the server:** the moment my key sits behind a public endpoint,
+every stranger's Whisper transcription is billed to me. Protecting it means auth,
+rate limiting, a database of users, a host that never sleeps — a weekend of work
+and a monthly bill, so that a portfolio project nobody is paying for can be
+abused for free.
+
+**What I did instead — BYOK (bring your own key):** the key is typed into
+`settings.html`, stored in the visitor's own `localStorage`, and sent from their
+browser straight to OpenAI or Anthropic. It never touches a machine of mine,
+because I don't have one in the path.
+
+**What it bought:**
+
+- **Zero infrastructure.** The whole app is static files on GitHub Pages. Nothing
+  to deploy, nothing to pay for, nothing to keep alive at 3 a.m.
+- **A privacy claim I can actually defend.** Recordings and progress never leave
+  the browser. That is not a promise about my server — there is no server.
+- **Costs stay honest.** The user sees the real price of what they use
+  (~$0.006/min of Whisper) instead of hitting my invisible quota.
+
+**What it cost, and I'll say it plainly:** the barrier to entry is real — a
+visitor who doesn't have an API key can't use Phases 2–4. That's why every base
+feature (the CEFR test, Web Speech pronunciation scoring, the dashboard) works
+with no key at all: the app has to be useful to someone who just clicked the
+link. The trade was deliberate, not an accident of scope.
 
 ---
 
