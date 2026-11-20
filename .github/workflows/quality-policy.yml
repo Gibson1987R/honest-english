@@ -1,0 +1,39 @@
+name: Quality Policy
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review, edited, closed]
+  issues:
+    types: [edited, closed, reopened]
+  issue_comment:
+    types: [created, edited]
+  pull_request_review:
+    types: [submitted, dismissed]
+  workflow_run:
+    workflows: [Quality Tests, Quality Security]
+    types: [completed]
+  push:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  issues: write
+  pull-requests: read
+  checks: write
+concurrency:
+  group: quality-policy-${{ github.repository }}
+  cancel-in-progress: false
+jobs:
+  evaluate:
+    if: github.event_name != 'issue_comment' || github.event.comment.user.login == 'chatgpt-codex-connector[bot]' || github.event.comment.user.login == 'Gibson1987R'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b
+        with:
+          script: |
+            const { main } = require(process.env.GITHUB_WORKSPACE + '/.github/quality/policy.cjs');
+            await main({github, context, core});
