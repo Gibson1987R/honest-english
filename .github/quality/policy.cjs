@@ -118,6 +118,10 @@ function classifyEvidence({
       waiting.push(
         `Falta completar Quality ${key === "tests" ? "Tests" : "Security"} para esta versión.`,
       );
+    else if (["cancelled", "skipped", "neutral", "stale"].includes(run.conclusion))
+      waiting.push(
+        `Quality ${key === "tests" ? "Tests" : "Security"} quedó incompleto (${run.conclusion}); repetir la validación.`,
+      );
     else if (run.conclusion !== "success")
       failed.push(
         `Quality ${key === "tests" ? "Tests" : "Security"} no pasó (${run.conclusion || "sin resultado"}).`,
@@ -203,7 +207,7 @@ async function reviewPR({ github, context, core }, number) {
     [file.filename, file.previous_filename]
       .filter(Boolean)
       .some((path) =>
-        /^(?:\.github\/|(?:.*\/)?AGENTS\.md$|(?:.*\/)?SECURITY\.md$|(?:.*\/)?(?:bunfig\.toml|vitest\.config\.[^/]+|jest\.config\.[^/]+|playwright\.config\.[^/]+|conftest\.py|package\.json|package-lock\.json|bun\.lockb?|yarn\.lock|pnpm-lock\.yaml|pyproject\.toml|pytest\.ini|tox\.ini|setup\.cfg|requirements[^/]*\.txt)$|\.trivy|trivy|\.gitleaks|gitleaks|\.semgrep|semgrep)/i.test(
+        /^(?:\.github\/|(?:.*\/)?scripts\/check-tracked\.mjs$|(?:.*\/)?AGENTS\.md$|(?:.*\/)?SECURITY\.md$|(?:.*\/)?(?:bunfig\.toml|vitest\.config\.[^/]+|jest\.config\.[^/]+|playwright\.config\.[^/]+|conftest\.py|package\.json|package-lock\.json|bun\.lockb?|yarn\.lock|pnpm-lock\.yaml|pyproject\.toml|pytest\.ini|tox\.ini|setup\.cfg|requirements[^/]*\.txt)$|\.trivy|trivy|\.gitleaks|gitleaks|\.semgrep|semgrep)/i.test(
           path,
         ),
       ),

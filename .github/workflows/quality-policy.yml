@@ -8,7 +8,7 @@ on:
     types: [created, edited, deleted]
   workflow_run:
     workflows: [Quality Tests, Quality Security, Quality Review Signal]
-    types: [completed]
+    types: [requested, in_progress, completed]
   push:
     branches: [main]
   workflow_dispatch:

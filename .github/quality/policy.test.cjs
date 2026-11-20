@@ -345,10 +345,21 @@ test("Bun y otros archivos de descubrimiento de pruebas requieren revisión espe
     "apps/web/vitest.config.ts",
     "jest.config.js",
     "tests/conftest.py",
+    "scripts/check-tracked.mjs",
   ]) {
     const fixture = apiFixture();
     fixture.args.github.rest.pulls.listFiles = async () => [{ filename }];
     await policy.reviewPR(fixture.args, 2);
     assert.equal(fixture.writes[0][1].conclusion, "failure", filename);
+  }
+});
+
+test("cancelaciones y omisiones se informan incompletas, sin atribuir un fallo de código", () => {
+  for (const conclusion of ["cancelled", "skipped", "neutral", "stale"]) {
+    const data = good();
+    data.runs.tests.conclusion = conclusion;
+    const result = policy.classifyEvidence(data);
+    assert.equal(result.state, "incomplete");
+    assert.equal(result.failed.length, 0);
   }
 });
