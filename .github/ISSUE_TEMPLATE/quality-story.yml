@@ -1,0 +1,33 @@
+name: Historia de usuario
+description: Problema, solución y criterios verificables para cambios del proyecto.
+title: "[Historia] "
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: Historia de usuario
+      description: Como [rol], quiero [capacidad] para [beneficio].
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema
+      description: Situación actual y resultado necesario.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solución propuesta
+      description: Alcance, límites y comportamiento esperado.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Criterios de aceptación
+      description: Lista de condiciones comprobables; incluye regresión y seguridad aplicables.
+      placeholder: "- [ ] Al producirse X, sucede Y."
+    validations:
+      required: true
