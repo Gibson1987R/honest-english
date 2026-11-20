@@ -5,13 +5,12 @@ on:
   issues:
     types: [edited, closed, reopened]
   issue_comment:
-    types: [created, edited]
-  pull_request_review:
-    types: [submitted, dismissed]
+    types: [created, edited, deleted]
   workflow_run:
-    workflows: [Quality Tests, Quality Security]
+    workflows: [Quality Tests, Quality Security, Quality Review Signal]
     types: [completed]
   push:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -35,5 +34,10 @@ jobs:
       - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b
         with:
           script: |
-            const { main } = require(process.env.GITHUB_WORKSPACE + '/.github/quality/policy.cjs');
+            const file = process.env.GITHUB_WORKSPACE + '/.github/quality/policy.cjs';
+            if (!require('node:fs').existsSync(file)) {
+              core.setFailed('Instalación pendiente: la política aún no está en la rama predeterminada. Requiere revisión y autorización de Gibson; no ejecutar código del PR como alternativa.');
+              return;
+            }
+            const { main } = require(file);
             await main({github, context, core});

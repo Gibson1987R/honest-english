@@ -20,7 +20,7 @@ La evidencia de Codex se reconoce únicamente del bot oficial y para el SHA actu
 
 Los cambios a `.github/`, AGENTS.md, SECURITY.md manifiestos/scripts de dependencias y supresiones del escáner requieren revisión explícita de Gibson: comentario exacto `quality-policy-approved: SHA_COMPLETO`. Solo se acepta del usuario propietario y para ese commit. La confirmación debe ser un comentario nuevo, sin editar; si hay una corrección publicar uno nuevo. Se verifica autor/editor de la evidencia del bot con GraphQL. Esta validación técnica es independiente del permiso de merge. Si dos PR comparten el mismo SHA, separar las ramas o cerrar el duplicado antes de continuar.
 
-Cada evento válido barre todos los PR abiertos; un push a la base invalida la evidencia previa cuando deja de incluirse la base. Esto evita perder PR por reemplazo de eventos pendientes. El barrido manual recupera estados tras una interrupción.
+Los eventos de revisión se reciben en un workflow sin escritura y solo su finalización despierta el evaluador confiable mediante workflow_run. El evaluador con escritura no usa definiciones de PR ni push a ramas de trabajo. Los comentarios eliminados o editados del propietario/bot invalidan evidencia retirada. Cada evento válido barre todos los PR abiertos; un push a la base invalida la evidencia previa cuando deja de incluirse la base. Esto evita perder PR por reemplazo de eventos pendientes. El barrido manual recupera estados tras una interrupción.
 
 ## Seguridad de la automatización
 

@@ -1,0 +1,13 @@
+name: Quality Review Signal
+on:
+  pull_request_review:
+    types: [submitted, dismissed]
+permissions:
+  contents: read
+jobs:
+  signal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Avisar al evaluador confiable
+        run: echo 'Review event received; Quality Policy reads the actual review from GitHub.'
